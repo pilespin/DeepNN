@@ -28,15 +28,25 @@ def main():
 
 	d.loadFile(file)
 
-	# d.printFeatureHeader()
-	# d.printAllFeature()
 
-	# print d.count(d.getFeature(16, 1, "Gryffindor"))
-	# print d.count(d.getFeature(16, 1, "Gryffindor"))
 	print d.getName(1)
 	for house in d.getFeature(1, uniq=True):
 		print house
-		print d.count(d.getFeature(16, 1, house))
-		
+		d.printFeatureHeader()
+		index = 6
+		# i = 6
+		while index <= 18:
+			nom = d.getName(index)
+			nb = d.count(d.getFeature(index, 1, house))
+			moy = d.mean(d.getFeature(index, 1, house))
+			std = d.standardDeviation(d.getFeature(index, 1, house), moy)
+			min1 = d.min(d.getFeature(index, 1, house))
+			q25, q50, q75 = d.quartile(d.getFeature(index, 1, house))
+			max1 = d.max(d.getFeature(index, 1, house))
+
+			print("{0:<40s} {1:<15.5g} {2:<15.5g} {3:<15.5g} {4:<15.5g} {5:<15.5g} {6:<15.5g} {7:<15.5g} {8:<15.5g}" \
+				.format(nom, nb, std, moy, min1, q25, q50, q75, max1))
+			index+=1
+		print ""
 
 main()
