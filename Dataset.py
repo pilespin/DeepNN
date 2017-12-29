@@ -2,6 +2,7 @@
 
 import csv
 import math
+import numpy as np
 
 class Dataset(object):
 
@@ -22,13 +23,25 @@ class Dataset(object):
 				return x[index]
 		return None
 
-	def getFeature(self, index):
+	def getFeature(self, index, column=-1, name='', uniq=False):
 		X = []
-		for x in self._X:
-			if len(x[index]) > 0:
-				X.append(float(x[index]))
-
-		return X
+		if column != -1:
+			for x in self._X:
+				if len(x[index]) > 0 and x[column] == name:
+					X.append(float(x[index]))
+		else:
+			if self._isFloat(self._X[0][index]) == True:
+				for x in self._X:
+					if len(x[index]) > 0:
+						X.append(float(x[index]))
+			else:
+				for x in self._X:
+					if len(x[index]) > 0:
+						X.append(x[index])
+		if uniq == True:
+			return np.unique(X)
+		else:
+			return X
 
 	################################## INIT ##################################
 
@@ -47,53 +60,46 @@ class Dataset(object):
 
 	################################## CALC ##################################
 
-	def count(self, index):
-		i = 0
-		for x in self._X:
-			if len(x[index]) > 0:
-				i+=1
-		return i
+	def count(self, X):
+		return len(X)
+		# i = 0
+		# for x in X:
+		# 	i+=1
+		# return i
 
-	def mean(self, index):
+	def mean(self, X):
 		s = 0
 		i = 0
-		for x in self._X:
-			if len(x[index]) > 0:
-				i+=1
-				add = float(x[index])
-				s += (add - s) / i
+		for x in X:
+			i+=1
+			s += (x - s) / i
 		return s
 
-	def standardDeviation(self, index, mean):
+	def standardDeviation(self, X, mean):
 		s = 0
 		i = 0
-		for x in self._X:
-			if len(x[index]) > 0:
-				i+=1
-				add = math.pow((float(x[index]) - mean), 2)
-				s += (add - s) / i
+		for x in X:
+			i+=1
+			add = math.pow((x - mean), 2)
+			s += (add - s) / i
 		return math.sqrt(s)
 
-	def min(self, index):
+	def min(self, X):
 		m = None
-		for x in self._X:
-			if len(x[index]) > 0:
-				new = float(x[index])
-				if (m == None):
-					m = new
-				elif new < m:
-					m = new
+		for new in X:
+			if (m == None):
+				m = new
+			elif new < m:
+				m = new
 		return m
 
-	def max(self,index):
+	def max(self, X):
 		m = None
-		for x in self._X:
-			if len(x[index]) > 0:
-				new = float(x[index])
-				if (m == None):
-					m = new
-				elif new > m:
-					m = new
+		for new in X:
+			if (m == None):
+				m = new
+			elif new > m:
+				m = new
 		return m
 
 	def medianArray(self, X):
@@ -120,12 +126,7 @@ class Dataset(object):
 			b = X[second:m]
 			return a, med, b
 
-	def quartile(self, index):
-		X = []
-		for x in self._X:
-			if len(x[index]) > 0:
-				X.append(float(x[index]))
-
+	def quartile(self, X):
 		X.sort()
 		A, med, B = self.medianArray(X)
 		n1, one, n2 = self.medianArray(A)
@@ -147,12 +148,12 @@ class Dataset(object):
 			return;
 	
 		nom = self.getName(index)
-		nb = self.count(index)
-		moy = self.mean(index)
-		std = self.standardDeviation(index, moy)
-		min1 = self.min(index)
-		q25, q50, q75 = self.quartile(index)
-		max1 = self.max(index)
+		nb = self.count(self.getFeature(index))
+		moy = self.mean(self.getFeature(index))
+		std = self.standardDeviation(self.getFeature(index), moy)
+		min1 = self.min(self.getFeature(index))
+		q25, q50, q75 = self.quartile(self.getFeature(index))
+		max1 = self.max(self.getFeature(index))
 	 
 		print("{0:<40s} {1:<15.5g} {2:<15.5g} {3:<15.5g} {4:<15.5g} {5:<15.5g} {6:<15.5g} {7:<15.5g} {8:<15.5g}" \
 			.format(nom, nb, std, moy, min1, q25, q50, q75, max1))
@@ -160,9 +161,10 @@ class Dataset(object):
 	################################## ELSE ##################################
 
 	def _isFloat(self, string):
-		try:
-			x = float(string)
-			return(True)
-		except ValueError:
-			return(False)
+		if string != None or len(string) > 0:
+			try:
+				x = float(string)
+				return(True)
+			except ValueError:
+				return(False)
 		return(False)
