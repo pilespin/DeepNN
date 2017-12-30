@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import csv
-import math
+# import math
 import numpy as np
 
 class Dataset(object):
@@ -80,9 +80,9 @@ class Dataset(object):
 		i = 0
 		for x in X:
 			i+=1
-			add = math.pow((x - mean), 2)
+			add = (x - mean) **2
 			s += (add - s) / i
-		return math.sqrt(s)
+		return np.sqrt(s)
 
 	def min(self, X):
 		m = None
