@@ -26,8 +26,9 @@ def checkArg(argv):
 		exit(1)
 	return (file)
 
-def addFeatureOnSubplot(index, X, name, indexSubplot):
+def addFeatureOnSubplot(index1, index2, d, indexSubplot, width):
 
+	str_limit = 5
 	color = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
 		  '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
 		  '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
@@ -39,17 +40,47 @@ def addFeatureOnSubplot(index, X, name, indexSubplot):
 		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
 		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF']
 
-	ax = plt.subplot(2, 2, indexSubplot)
-	plt.tight_layout()
-	ax.set_xlim([-10, len(X) + 10])
+	X = d.getFeature(index1)
+	Y = d.getFeature(index2)
 
-	Xs = sorted(X)
-	clr = color[index]
-	plt.scatter(np.arange(len(X)), X, color=clr, alpha=0.5, label=name)
-	plt.scatter(np.arange(len(X)), Xs, color=clr, alpha=0.5)
-	plt.legend()
-	plt.ylabel('Worst <---> Best')
-	# plt.xlabel('Evaluation')
+	# X.sort()
+	# Y.sort()
+	len1 = len(X)
+	len2 = len(Y)
+	max1 = len1
+	if len1 > len2:
+		max1 = len1
+	if len2 > len1:
+		max1 = len2
+
+	X.resize(max1)
+	Y.resize(max1)
+
+	ax = plt.subplot(width, width, indexSubplot)
+
+	clr = color[1]
+	plt.scatter(Y, X, color=clr, alpha=0.3)
+	clr = color[6]
+	plt.scatter(X, Y, color=clr, alpha=0.3)
+	plt.tight_layout()
+
+	frame1 = plt.gca()
+	frame1.axes.xaxis.set_ticklabels([])
+	frame1.axes.yaxis.set_ticklabels([])
+	if (indexSubplot -1) % width == 0:
+		plt.ylabel(d.getName(index1)[:str_limit])
+	if (indexSubplot -1) % width != 0 and indexSubplot <= width:
+		plt.title(d.getName(index2)[:str_limit])
+
+def drawOneSub(d, Xstart, Ystart, range1):
+	
+	x = 0
+	for i in range1:
+		sys.stdout.write('.')
+		sys.stdout.flush()
+		addFeatureOnSubplot(Xstart, Ystart + x, d, i+1, len(range1))
+		x += 1
+
 
 def main():
 
@@ -62,23 +93,17 @@ def main():
 	fig, axes = plt.subplots(figsize=(18,10))
 	fig.tight_layout()
 
-	index = 6
-	while index <= 18:
-		
-		mean = d.mean(d.getFeature(index))
-		std = d.standardDeviation(d.getFeature(index), mean)
+	start = 6
+	width = 13
 
-		if mean >= -10 and mean <= 10 and std >= -10 and std <= 10:
-			addFeatureOnSubplot(index, d.getFeature(index), d.getName(index), 1)
-		elif mean >= -500 and mean <= 500 and std >= -500 and std <= 500:
-			addFeatureOnSubplot(index, d.getFeature(index), d.getName(index), 2)
-		elif mean >= -2000 and mean <= 2000 and std >= -2000 and std <= 2000:
-			addFeatureOnSubplot(index, d.getFeature(index), d.getName(index), 3)
-		else:
-			addFeatureOnSubplot(index, d.getFeature(index), d.getName(index), 4)
-
-		index+=1
-
+	widthStart = 0
+	widthEnd = widthStart + width
+	ystart = start
+	for i in range(width):
+		drawOneSub(d, start, ystart, range(widthStart, widthEnd))
+		widthStart += width
+		widthEnd += width
+		start += 1
 
 	# plt.title(d.getName(index))
 
@@ -87,4 +112,3 @@ def main():
 
 
 main()
-

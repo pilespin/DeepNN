@@ -85,6 +85,8 @@ def main():
 			plt.bar(x + (width*(w+4)), HOUSE['Slytherin'][i], width, color='c')
 		w+=4
 	
+	plt.tight_layout()
+	
 	plt.xticks(x, HOUSE['name'], rotation='vertical')
 	
 	plt.xlabel('Cours')

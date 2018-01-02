@@ -41,7 +41,7 @@ class Dataset(object):
 		if uniq == True:
 			return np.unique(X)
 		else:
-			return X
+			return np.array(X)
 
 	################################## INIT ##################################
 

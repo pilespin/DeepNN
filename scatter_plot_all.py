@@ -46,11 +46,29 @@ def addFeatureOnSubplot(index, X, name, indexSubplot):
 	Xs = sorted(X)
 	clr = color[index]
 	plt.scatter(np.arange(len(X)), X, color=clr, alpha=0.5, label=name)
-	plt.scatter(np.arange(len(X)), Xs, color=clr, alpha=0.5)
+	# plt.scatter(np.arange(len(X)), Xs, color=clr, alpha=0.5)
 	plt.legend()
 	plt.ylabel('Worst <---> Best')
 	# plt.xlabel('Evaluation')
 
+class Index(object):
+	ind = 0
+
+	def next(self, event):
+		self.ind += 1
+		i = self.ind % len(freqs)
+		ydata = np.sin(2*np.pi*freqs[i]*t)
+		l.set_ydata(ydata)
+		plt.draw()
+
+	def prev(self, event):
+		self.ind -= 1
+		i = self.ind % len(freqs)
+		ydata = np.sin(2*np.pi*freqs[i]*t)
+		l.set_ydata(ydata)
+		plt.draw()
+
+from matplotlib.widgets import Button
 def main():
 
 	file = checkArg(sys.argv)
@@ -63,7 +81,7 @@ def main():
 	fig.tight_layout()
 
 	index = 6
-	while index <= 18:
+	while index <= 17:
 		
 		mean = d.mean(d.getFeature(index))
 		std = d.standardDeviation(d.getFeature(index), mean)
@@ -82,8 +100,49 @@ def main():
 
 	# plt.title(d.getName(index))
 
+
+	# callback = Index()
+
+	# axprev = plt.axes([0.7, 0.05, 0.1, 0.075])
+	# axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
+	# bnext = Button(axnext, 'Next')
+	# bnext.on_clicked(callback.next)
+	# bprev = Button(axprev, 'Previous')
+	# bprev.on_clicked(callback.prev)
+
+
+
+	# plt.legend()
+
+	# plt.SubplotParams()
 	plt.savefig('scatter_plot.png')
 	plt.show()
+
+
+
+
+	# x1 = np.linspace(0.0, 5.0)
+	# x2 = np.linspace(0.0, 2.0)
+
+	# y1 = np.cos(2 * np.pi * x1) * np.exp(-x1)
+	# y2 = np.cos(2 * np.pi * x2)
+
+	# plt.subplot(2, 2, 1)
+	# plt.plot(x1, y1, 'o-')
+	# plt.title('A tale of 2 subplots')
+	# plt.ylabel('Damped oscillation')
+
+	# plt.subplot(2, 2, 2)
+	# plt.plot(x2, y2, '.-')
+	# plt.xlabel('time (s)')
+	# plt.ylabel('Undamped')
+
+	# plt.subplot(2, 2, 3)
+	# plt.plot(x2, y2, '.-')
+	# plt.xlabel('time (s)')
+	# plt.ylabel('Undamped')
+	# plt.show()
+
 
 
 main()
