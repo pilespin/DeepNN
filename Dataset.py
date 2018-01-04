@@ -3,8 +3,9 @@
 import csv
 # import math
 import numpy as np
+from Math import *
 
-class Dataset(object):
+class Dataset(Math):
 
 	_X = []
 	_Nm = []
@@ -15,7 +16,7 @@ class Dataset(object):
 	################################## GET ##################################
 
 	def getDataset(self):
-		return (_X)
+		return (self._X)
 
 	def getName(self, index):
 		for x in self._Nm:
@@ -59,6 +60,14 @@ class Dataset(object):
 		return (self._X, self._Nm)
 
 	################################## CALC ##################################
+
+
+	def countByIndex(self, index):
+		# return len(X)
+		i = 0
+		for x in self._X[index]:
+			i+=1
+		return i
 
 	def count(self, X):
 		return len(X)
