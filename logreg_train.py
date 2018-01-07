@@ -9,6 +9,8 @@ from Math import *
 
 import matplotlib.pyplot as plt
 
+np.set_printoptions(precision=4)
+
 def checkArg(argv):
 	if len(sys.argv) <= 1:
 		print "Missing file"
@@ -27,8 +29,8 @@ def csvToArray(file):
 	file = open(file, "r")
 	arr = csv.reader(file, delimiter=',')
 
-	X = [] # Mileage
-	Y = [] # Price
+	X = []
+	Y = []
 
 	i = 0
 	for line in arr:
@@ -45,27 +47,29 @@ def csvToArray(file):
 
 #############################################################
 
-def sigmaTh(d, m, th1, houseArray):
+def sigmaTh(d, m, th1, th_J, houseArray):
 	# sum sigma
 	Xall = d.getDataset()
-	# m = d.count(d.getFeature(0))
 
-	# m = d.countByIndex(0)
 	i = 0
 	sigma = 0.0
 	while i < m:
+
 		X = getLayer(d, i, inFloat=True)
 		house = Xall[i][1]
 		Y = getIndex(houseArray, house)
-		print "INDEX OF: " + str(Y)
-		Htheta = np.sum(predict(X, th1))
-		sigma = sigma + (Y * np.log(Htheta)) + (1 - Y) * np.log(1 - Htheta)
+		if Y == 1:
+			# Htheta = np.sum(predict(X, th1)) * X[th_J]
+			# print predict(X, th1)
+			Htheta = np.sum(predict(X, th1)) **2
+			# Htheta = np.sum(predict(X, th1))
+			tmp = Htheta
+			# sigma = sigma + (Y * np.log(Htheta)) + (1 - Y) * np.log(1 - Htheta)
+			sigma += tmp
+			# print sigma
 		i+=1
+	# print sigma
 	return sigma
-
-##############################
-############ MAIN ############
-##############################
 
 def getLayer(d, index, inFloat=False):
 	start = 6
@@ -98,56 +102,66 @@ def getIndex(X, querie):
 			return i
 	return -1
 
+def updateLr(th, loss, lr):
+	if loss > 0:
+		th = th - lr
+	else:
+		th = th + lr
+	return th
+
+##############################
+############ MAIN ############
+##############################
 
 def main():
 
 	file = checkArg(sys.argv)
 
 	d = Dataset()
-	m = Math()
+	ma = Math()
 
 	d.loadFile(file)
 
 	m = d.count(d.getFeature(0))
 
-
-	# start = 6
-	# end = 18
-
+	lr = 0.01
 	nbInput = 13
 	houseArray = d.getFeature(1, uniq=True)
+	print houseArray
 	nbOutput = len(houseArray)
 	print houseArray
-	# print outArray.where('Hufflepuff')
-	# in0 = np.zeros(nbInput, dtype=float)
-	# out0 = np.zeros(nbOutput, dtype=float)
-	# print in0
-	# print out0
-	# X = getLayer(d, 0, start, end, inFloat=True)	# Input
-	# Y = getLayer(d, 0, 1, 1)						# Output
-	# print X
-	# print "----------------"
-	# print Y
 
-	th1 = np.array([2]*nbInput, dtype=float)
+	# th1 = np.array([0]*nbInput, dtype=float)
+	th1 = np.zeros(nbInput, dtype=float)
 	# print predict(X, th1)
 	print th1
-	sig = sigmaTh(d, m, th1, houseArray)
 
-	loss = sig / m
-	print sig
-	print loss
-	# in1 = np.ones(nbInput, dtype=float)
-	# out1 = np.zeros(nbOutput, dtype=float)
-	# print "----------------"
-	# print th1
-	# print "----------------"
-	# # print in1
-	# # print "----------------"
-	# print out1
-	# print predict(X, th1)
-	# print X*th1
-	# print m.sigmoid(X*th1)
+	for x in range(10000):
+		x+=1
+		sigma = np.array([0]*nbInput, dtype=float)
+		loss = np.array([0]*nbInput, dtype=float)
+		j = 0
+		for i in th1:
+			# sigma[j] = updateLr(th1[j], loss, lr)
+			sigma[j] = sigmaTh(d, m, th1, j, houseArray)
+			loss[j] = lr * (sigma[j] / m)
+			j+=1
 
+		print "Sigma: " + str(sigma)
+		print " Loss: " + str(loss)
+		print "TLoss: " + str(np.sum(loss))
+		j = 0
+		for i in th1:
+			th1[j] = updateLr(th1[j], loss[j], lr)
+			j+=1
+		print "Theta: " + str(th1)
+		index = 10
+		X = getLayer(d, index, inFloat=True)
+		print "Feature: " + str(X) + " House: " + str(d.getDataset()[index][1])
+		tmp = np.sum(predict(X, th1))
+		print "Predict: " + str(ma.sigmoid([tmp]))
+		print "------------------------------------------"
+
+
+	
 main()
-

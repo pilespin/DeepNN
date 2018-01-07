@@ -34,7 +34,7 @@ def main():
 
 	d.loadFile(file)
 
-	index = 9
+	index = 11
 
 	x1 = d.getFeature(index)
 	x2 = d.getFeature(index+1)
