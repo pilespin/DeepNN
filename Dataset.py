@@ -8,6 +8,7 @@ from Math import *
 class Dataset(Math):
 
 	_X = []
+	_len_X = 0
 	_Nm = []
 
 	def __init__(self):
@@ -18,6 +19,9 @@ class Dataset(Math):
 	def getDataset(self):
 		return (self._X)
 
+	def getLength(self):
+		return (self._len_X)
+
 	def getName(self, index):
 		for x in self._Nm:
 			if len(x[index]) > 0:
@@ -25,6 +29,10 @@ class Dataset(Math):
 		return None
 
 	def getFeature(self, index, column=-1, name='', uniq=False):
+		if index >= self._len_X:
+			print "Error: Out of bound trying to get element at index " + str(index)
+			exit(1)
+
 		X = []
 		if column != -1:
 			for x in self._X:
@@ -57,6 +65,7 @@ class Dataset(Math):
 				self._Nm.append(line)
 				continue
 			self._X.append(line)
+		self._len_X = len(self._X)
 		return (self._X, self._Nm)
 
 	################################## CALC ##################################

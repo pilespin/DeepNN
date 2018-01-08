@@ -5,7 +5,9 @@ import csv
 import sys	
 # import time
 from Dataset import *
+from Classifier import *
 from Math import *
+# from sklearn.metrics import accuracy_score
 
 import matplotlib.pyplot as plt
 
@@ -47,31 +49,20 @@ def csvToArray(file):
 
 #############################################################
 
-def sigmaTh(d, m, th1, th_J, houseArray):
-	# sum sigma
-	Xall = d.getDataset()
+def getHouseByIndex(d, index):
+	house = d.getDataset()[index][1]
+	return house
 
+def getIndex(X, querie):
 	i = 0
-	sigma = 0.0
-	while i < m:
-
-		X = getLayer(d, i, inFloat=True)
-		house = Xall[i][1]
-		Y = getIndex(houseArray, house)
-		if Y == 1:
-			# Htheta = np.sum(predict(X, th1)) * X[th_J]
-			# print predict(X, th1)
-			Htheta = np.sum(predict(X, th1)) **2
-			# Htheta = np.sum(predict(X, th1))
-			tmp = Htheta
-			# sigma = sigma + (Y * np.log(Htheta)) + (1 - Y) * np.log(1 - Htheta)
-			sigma += tmp
-			# print sigma
+	for x in X:
 		i+=1
-	# print sigma
-	return sigma
+		if x == querie:
+			# print int(i)
+			return int(i)
+	return -1
 
-def getLayer(d, index, inFloat=False):
+def getInputInDataset(d, index, inFloat=False):
 	start = 6
 	end = 18
 
@@ -90,24 +81,39 @@ def getLayer(d, index, inFloat=False):
 			start += 1
 	return X
 
-def predict(X, th1):
-	m = Math()
-	return m.sigmoid(X*th1)
+def generateDataset(d, index=-1):
 
-def getIndex(X, querie):
-	i = 0
-	for x in X:
-		i+=1
-		if x == querie:
-			return i
-	return -1
+	X = []
+	Y = []
 
-def updateLr(th, loss, lr):
-	if loss > 0:
-		th = th - lr
-	else:
-		th = th + lr
-	return th
+	houseArray = d.getFeature(1, uniq=True)
+
+	for i in range(d.getLength()):
+		x = getInputInDataset(d, i, inFloat=True)
+		y = getIndex(houseArray, getHouseByIndex(d, i))
+
+		if index == -1 or (y == index):
+			# print y
+			X.append(x)
+			Y.append([y])
+
+	X = np.array(X)
+	Y = np.array(Y)
+	if len(X) != len(Y):
+		print "Error when generate dataset"
+		exit(1)
+	return X, Y
+
+def generatePrediction(c, X, Y):
+	y_pred = []
+	y_true = []
+
+	for i,x in enumerate(X):
+		output = c.predict(x)
+		y_pred.append([output])
+		y_true = Y[i]
+	return y_true, y_pred
+
 
 ##############################
 ############ MAIN ############
@@ -115,53 +121,43 @@ def updateLr(th, loss, lr):
 
 def main():
 
+	nbInput = 13
+	nbOutput = 4
+
 	file = checkArg(sys.argv)
 
+	m = Math()
 	d = Dataset()
-	ma = Math()
-
+	c = []
+	for i in range(nbOutput):
+		c.append(Classifier(nbInput, nbOutput))
+	# ma = Math()
 	d.loadFile(file)
 
-	m = d.count(d.getFeature(0))
-
-	lr = 0.01
-	nbInput = 13
+	index = 1
 	houseArray = d.getFeature(1, uniq=True)
-	print houseArray
-	nbOutput = len(houseArray)
-	print houseArray
+	Xtest = getInputInDataset(d, index, inFloat=True)
+	Ytest = getIndex(houseArray, getHouseByIndex(d, index))
 
-	# th1 = np.array([0]*nbInput, dtype=float)
-	th1 = np.zeros(nbInput, dtype=float)
-	# print predict(X, th1)
-	print th1
+	X = [None]*nbOutput
+	Y = [None]*nbOutput
 
-	for x in range(10000):
-		x+=1
-		sigma = np.array([0]*nbInput, dtype=float)
-		loss = np.array([0]*nbInput, dtype=float)
-		j = 0
-		for i in th1:
-			# sigma[j] = updateLr(th1[j], loss, lr)
-			sigma[j] = sigmaTh(d, m, th1, j, houseArray)
-			loss[j] = lr * (sigma[j] / m)
-			j+=1
+	for i in range(nbOutput):
+		X[i], Y[i] = generateDataset(d, index=i+1)
+		# print X[i]
+		# print Y[i]
 
-		print "Sigma: " + str(sigma)
-		print " Loss: " + str(loss)
-		print "TLoss: " + str(np.sum(loss))
-		j = 0
-		for i in th1:
-			th1[j] = updateLr(th1[j], loss[j], lr)
-			j+=1
-		print "Theta: " + str(th1)
-		index = 10
-		X = getLayer(d, index, inFloat=True)
-		print "Feature: " + str(X) + " House: " + str(d.getDataset()[index][1])
-		tmp = np.sum(predict(X, th1))
-		print "Predict: " + str(ma.sigmoid([tmp]))
-		print "------------------------------------------"
+	print "train"
+	for i in range(1000):
+		for i in range(nbOutput):
+			# pass
+			# print i
+			c[i].train(X[i], Y[i])
+			output = c[i].predict(Xtest)
+			print "class " + str(i) + " -- " + str(m.sigmoid_core(output.sum()))
+			# y_true, y_pred = generatePrediction(c, X, Y)
+			# accuracy_score(y_true, y_pred)
+		print "-----------------"
 
 
-	
 main()

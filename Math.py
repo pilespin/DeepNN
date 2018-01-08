@@ -23,3 +23,4 @@ class Math(object):
 		for i in X:
 			Y = np.append(Y, self.sigmoid_core(i))
 		return Y
+
