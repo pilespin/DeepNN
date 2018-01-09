@@ -85,13 +85,13 @@ class Dataset(Math):
 		# 	i+=1
 		# return i
 
-	def mean(self, X):
-		s = 0
-		i = 0
-		for x in X:
-			i+=1
-			s += (x - s) / i
-		return s
+	# def mean(self, X):
+	# 	s = 0
+	# 	i = 0
+	# 	for x in X:
+	# 		i+=1
+	# 		s += (x - s) / i
+	# 	return s
 
 	def standardDeviation(self, X, mean):
 		s = 0

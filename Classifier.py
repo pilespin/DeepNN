@@ -63,6 +63,10 @@ class Classifier(Math):
 
 	def predict(self, X):
 		m = Math()
-		return m.sigmoid(X*self.weight)
+		# print "------------"
+		# print X
+		# print self.weight
+		# print "------------"
+		return m.sigmoid_core(m.sigmoid(X*self.weight).sum())
 
 	################################## GET ##################################

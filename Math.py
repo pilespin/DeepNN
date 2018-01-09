@@ -24,3 +24,22 @@ class Math(object):
 			Y = np.append(Y, self.sigmoid_core(i))
 		return Y
 
+	def mean(self, X):
+		s = 0
+		i = 0
+		for x in X:
+			i+=1
+			s += (x - s) / i
+		return s
+
+	def argMax(self, X):
+		m = None
+		ret = -1
+		for idx,new in enumerate(X):
+			if (m == None):
+				m = new
+				ret = idx
+			elif new > m:
+				m = new
+				ret = idx
+		return ret

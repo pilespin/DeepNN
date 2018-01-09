@@ -7,9 +7,9 @@ import sys
 from Dataset import *
 from Classifier import *
 from Math import *
-# from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 np.set_printoptions(precision=4)
 
@@ -107,13 +107,33 @@ def generateDataset(d, index=-1):
 def generatePrediction(c, X, Y):
 	y_pred = []
 	y_true = []
+	m = Math()
 
 	for i,x in enumerate(X):
-		output = c.predict(x)
-		y_pred.append([output])
-		y_true = Y[i]
+		# output = m.sigmoid_core(c.predict(x).sum())
+
+		pr = predictAll(c, x)
+		# print pr
+		output = m.argMax(pr) + 1
+		# print output
+		y_pred.append(output)
+		y_true.append(Y[i][0])
+
+	if len(y_true) != len(y_pred):
+		print "Error when generate prediction"
+		exit(1)
+		# m.argMax(mean)
 	return y_true, y_pred
 
+def predictAll(c, Xtest):
+	m = Math()
+	out = []
+	for idx,dt in enumerate(c):
+		Y = []
+		for x in Xtest:
+			Y.append(dt.predict(x))
+		out.append(m.mean(Y))
+	return np.array(out)
 
 ##############################
 ############ MAIN ############
@@ -144,19 +164,24 @@ def main():
 
 	for i in range(nbOutput):
 		X[i], Y[i] = generateDataset(d, index=i+1)
-		# print X[i]
-		# print Y[i]
 
 	print "train"
-	for i in range(1000):
+	output = [None]*nbOutput
+	y_true = [None]*nbOutput
+	y_pred = [None]*nbOutput
+
+	for j in range(1000):
 		for i in range(nbOutput):
-			# pass
-			# print i
 			c[i].train(X[i], Y[i])
-			output = c[i].predict(Xtest)
-			print "class " + str(i) + " -- " + str(m.sigmoid_core(output.sum()))
-			# y_true, y_pred = generatePrediction(c, X, Y)
-			# accuracy_score(y_true, y_pred)
+			# print "class " + str(i) + " -- " + str(m.sigmoid_core(output[i].sum()))
+			y_true[i], y_pred[i] = generatePrediction(c, X[i], Y[i])
+			mean = predictAll(c, X[i])
+			print "MEAN " + str(i) + " MAX: " + str(m.argMax(mean)) + ": " + str(mean)
+
+			# print y_true[i]
+			# print y_pred[i]
+			acc = accuracy_score(y_true[i], y_pred[i])
+			print "Accuracy: " + str(acc)
 		print "-----------------"
 
 
