@@ -9,11 +9,10 @@ from Math import *
 class Classifier(Math):
 
 	m 			= 0
-	lr 			= 0.001
+	lr 			= 0.00001
 	nbInput		= 0
 	nbOutput	= 0
 	weight		= []
-
 
 	def __init__(self, nbInput, nbOutput):
 		np.set_printoptions(precision=4)
@@ -54,9 +53,9 @@ class Classifier(Math):
 				sigma = self.sigma(X, Y, i)
 				loss = (sigma / self.m)
 				self.updateLr(i, loss)
-			sys.stdout.write('.')
-			sys.stdout.flush()
-		print ""
+			# sys.stdout.write('.')
+			# sys.stdout.flush()
+		# print ""
 
 	def predict(self, X):
 		m = Math()

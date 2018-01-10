@@ -6,6 +6,7 @@ import sys
 # import time
 from Dataset import *
 from Classifier import *
+from MultiClassifier import *
 from Math import *
 from sklearn.metrics import accuracy_score
 
@@ -65,22 +66,18 @@ def getInputInDataset(d, index, inFloat=False):
 	start = 6
 	end = 18
 
-	# X = np.array([])
 	X = []
 	if inFloat == True:
 		while start <= end:
 			tmp = d.getDataset()[index][start]
 			if len(tmp) > 0:
 				X.append(float(d.getDataset()[index][start]))
-				# X = np.append(X, float(d.getDataset()[index][start]))
 			else:
 				X.append(float(0))
-				# X = np.append(X, float(0))
 			start += 1
 	else:
 		while start <= end:
-			X.append(d.getDataset()[index][start])
-			# X = np.append(X, d.getDataset()[index][start])
+			Xd.append(d.getDataset()[index][start])
 			start += 1
 	return np.array(X)
 
@@ -106,31 +103,23 @@ def generateDataset(d, index=-1):
 		exit(1)
 	return X, Y
 
-def generatePrediction(c, X, Y):
+def generatePrediction(allclassifier, X, Y):
 	y_pred = []
 	y_true = []
 	m = Math()
 
 	for i,x in enumerate(X):
-		pr = predictAll(c, x)
-		output = m.argMax(pr) + 1
-		y_pred.append(output)
-		y_true.append(Y[i][0])
+		for j,y in enumerate(x):
+			output = allclassifier.getMax(y) + 1
+			y_pred.append(output)
+			y_true.append(Y[i][0])
 
 	if len(y_true) != len(y_pred):
 		print "Error when generate prediction"
 		exit(1)
+
 	return y_true, y_pred
 
-def predictAll(c, Xtest):
-	m = Math()
-	out = []
-	for idx,dt in enumerate(c):
-		Y = []
-		for x in Xtest:
-			Y.append(dt.predict(x))
-		out.append(m.mean(Y))
-	return np.array(out)
 
 ##############################
 ############ MAIN ############
@@ -147,15 +136,14 @@ def main():
 	d = Dataset()
 	d.loadFile(file)
 
-	c = []
-	for i in range(nbOutput):
-		c.append(Classifier(nbInput, nbOutput))
+	allclassifier = MultiClassifier(nbInput, nbOutput)
 
 	X = [None]*nbOutput
 	Y = [None]*nbOutput
 
 	for i in range(nbOutput):
 		X[i], Y[i] = generateDataset(d, index=i+1)
+		allclassifier.addClassifier(X[i], Y[i])
 
 	print "train"
 	output = [None]*nbOutput
@@ -163,15 +151,12 @@ def main():
 	y_pred = [None]*nbOutput
 
 	for j in range(2):
-		for i in range(nbOutput):
-			c[i].train(X[i], Y[i])
-			# print "class " + str(i) + " -- " + str(m.sigmoid_core(output[i].sum()))
-			mean = predictAll(c, X[i])
-			print "MEAN " + str(i) + " MAX: " + str(m.argMax(mean)) + ": " + str(mean)
+		allclassifier.train()
+		mean = allclassifier.predictAll(X[0])
 
-		y_true[i], y_pred[i] = generatePrediction(c, X, Y)
+		y_true[i], y_pred[i] = generatePrediction(allclassifier, X, Y)
 		acc = accuracy_score(y_true[i], y_pred[i]) * 100
-		print "Accuracy: " + str(acc) + "%"
+		print "epoch " + str(j) + " Accuracy: " + str(acc) + "%"
 
 
 main()
