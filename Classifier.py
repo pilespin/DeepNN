@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import csv
+import sys
 # import math
 import numpy as np
 from Math import *
@@ -40,9 +41,6 @@ class Classifier(Math):
 		i = 0
 		sigma = 0.0
 		while i < self.m:
-			# x = X[i]
-			# y = Y[i]
-			# if Y[i] == 1:
 			Htheta = (np.sum(self.predict(X[i])) - 1) * X[i][j]
 			# Htheta = np.sum(predict(X, th1))
 			tmp = Htheta
@@ -59,14 +57,12 @@ class Classifier(Math):
 				sigma = self.sigma(X, Y, i)
 				loss = (sigma / self.m)
 				self.updateLr(i, loss)
-
+			sys.stdout.write('.')
+			sys.stdout.flush()
+		print ""
 
 	def predict(self, X):
 		m = Math()
-		# print "------------"
-		# print X
-		# print self.weight
-		# print "------------"
 		return m.sigmoid_core(m.sigmoid(X*self.weight).sum())
 
 	################################## GET ##################################

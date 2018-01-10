@@ -58,7 +58,6 @@ def getIndex(X, querie):
 	for x in X:
 		i+=1
 		if x == querie:
-			# print int(i)
 			return int(i)
 	return -1
 
@@ -93,7 +92,6 @@ def generateDataset(d, index=-1):
 		y = getIndex(houseArray, getHouseByIndex(d, i))
 
 		if index == -1 or (y == index):
-			# print y
 			X.append(x)
 			Y.append([y])
 
@@ -110,19 +108,14 @@ def generatePrediction(c, X, Y):
 	m = Math()
 
 	for i,x in enumerate(X):
-		# output = m.sigmoid_core(c.predict(x).sum())
-
 		pr = predictAll(c, x)
-		# print pr
 		output = m.argMax(pr) + 1
-		# print output
 		y_pred.append(output)
 		y_true.append(Y[i][0])
 
 	if len(y_true) != len(y_pred):
 		print "Error when generate prediction"
 		exit(1)
-		# m.argMax(mean)
 	return y_true, y_pred
 
 def predictAll(c, Xtest):
@@ -148,16 +141,11 @@ def main():
 
 	m = Math()
 	d = Dataset()
+	d.loadFile(file)
+
 	c = []
 	for i in range(nbOutput):
 		c.append(Classifier(nbInput, nbOutput))
-	# ma = Math()
-	d.loadFile(file)
-
-	index = 1
-	houseArray = d.getFeature(1, uniq=True)
-	Xtest = getInputInDataset(d, index, inFloat=True)
-	Ytest = getIndex(houseArray, getHouseByIndex(d, index))
 
 	X = [None]*nbOutput
 	Y = [None]*nbOutput
@@ -174,15 +162,12 @@ def main():
 		for i in range(nbOutput):
 			c[i].train(X[i], Y[i])
 			# print "class " + str(i) + " -- " + str(m.sigmoid_core(output[i].sum()))
-			y_true[i], y_pred[i] = generatePrediction(c, X[i], Y[i])
 			mean = predictAll(c, X[i])
 			print "MEAN " + str(i) + " MAX: " + str(m.argMax(mean)) + ": " + str(mean)
 
-			# print y_true[i]
-			# print y_pred[i]
-			acc = accuracy_score(y_true[i], y_pred[i])
-			print "Accuracy: " + str(acc)
-		print "-----------------"
+		y_true[i], y_pred[i] = generatePrediction(c, X, Y)
+		acc = accuracy_score(y_true[i], y_pred[i]) * 100
+		print "Accuracy: " + str(acc) + "%"
 
 
 main()
