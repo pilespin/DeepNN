@@ -65,20 +65,24 @@ def getInputInDataset(d, index, inFloat=False):
 	start = 6
 	end = 18
 
-	X = np.array([])
+	# X = np.array([])
+	X = []
 	if inFloat == True:
 		while start <= end:
 			tmp = d.getDataset()[index][start]
 			if len(tmp) > 0:
-				X = np.append(X, float(d.getDataset()[index][start]))
+				X.append(float(d.getDataset()[index][start]))
+				# X = np.append(X, float(d.getDataset()[index][start]))
 			else:
-				X = np.append(X, float(0))
+				X.append(float(0))
+				# X = np.append(X, float(0))
 			start += 1
 	else:
 		while start <= end:
-			X = np.append(X, d.getDataset()[index][start])
+			X.append(d.getDataset()[index][start])
+			# X = np.append(X, d.getDataset()[index][start])
 			start += 1
-	return X
+	return np.array(X)
 
 def generateDataset(d, index=-1):
 
@@ -158,7 +162,7 @@ def main():
 	y_true = [None]*nbOutput
 	y_pred = [None]*nbOutput
 
-	for j in range(1000):
+	for j in range(2):
 		for i in range(nbOutput):
 			c[i].train(X[i], Y[i])
 			# print "class " + str(i) + " -- " + str(m.sigmoid_core(output[i].sum()))

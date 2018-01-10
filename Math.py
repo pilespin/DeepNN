@@ -19,10 +19,10 @@ class Math(object):
 		exit(1)
 
 	def sigmoid(self, X):
-		Y = np.array([])
+		Y = []
 		for i in X:
-			Y = np.append(Y, self.sigmoid_core(i))
-		return Y
+			Y.append(self.sigmoid_core(i))
+		return np.array(Y)
 
 	def mean(self, X):
 		s = 0

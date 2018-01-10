@@ -41,11 +41,8 @@ class Classifier(Math):
 		i = 0
 		sigma = 0.0
 		while i < self.m:
-			Htheta = (np.sum(self.predict(X[i])) - 1) * X[i][j]
-			# Htheta = np.sum(predict(X, th1))
-			tmp = Htheta
-			# sigma = sigma + (Y * np.log(Htheta)) + (1 - Y) * np.log(1 - Htheta)
-			sigma += tmp
+			Htheta = np.sum(self.predict(X[i]))
+			sigma += (Htheta - 1) * X[i][j]
 			i+=1
 		return sigma
 
