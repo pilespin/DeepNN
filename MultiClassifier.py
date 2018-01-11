@@ -25,18 +25,22 @@ class MultiClassifier(Math):
 		self.Y_train.append(Y)
 
 	def predictAll(self, X):
-		m = Math()
+		# m = Math()
 		out = []
 		for i,d in enumerate(self.allClassifier):
 			Y = []
 			for x in X:
 				Y.append(d.predict(x))
-			out.append(m.mean(Y))
+			out.append(self.m.mean(Y))
 		return np.array(out)
 
 	def train(self):
+		allLoss = []
+		tmp = 0
 		for i,d in enumerate(self.allClassifier):
-			d.train(self.X_train[i], self.Y_train[i])
+			tmp += d.train(self.X_train[i], self.Y_train[i])
+			allLoss.append(tmp)
+		return np.array(allLoss)
 
 	def getMax(self, X):
 		pr = self.predictAll(X)

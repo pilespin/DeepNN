@@ -9,7 +9,7 @@ from Math import *
 class Classifier(Math):
 
 	m 			= 0
-	lr 			= 0.00001
+	lr 			= 0.1
 	nbInput		= 0
 	nbOutput	= 0
 	weight		= []
@@ -48,11 +48,17 @@ class Classifier(Math):
 	def train(self, X, Y):
 		self.m = len(X)
 
+		allLoss = 0
 		for i,data in enumerate(self.weight):
 			for x in X:
 				sigma = self.sigma(X, Y, i)
 				loss = (sigma / self.m)
+				allLoss += loss
 				self.updateLr(i, loss)
+		return allLoss
+			# print self.weight
+				# print("Th0: {0:<15.5g} Th1: {1:<15.5g} Loss Th0: {2:<15.5g} Th1: {3:<15.5g} Epoch: {4:}" \
+		# .format(th0, th1, lossTh0, lossTh1, epoch))
 			# sys.stdout.write('.')
 			# sys.stdout.flush()
 		# print ""

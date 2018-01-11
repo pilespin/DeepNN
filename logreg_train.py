@@ -146,17 +146,20 @@ def main():
 		allclassifier.addClassifier(X[i], Y[i])
 
 	print "train"
-	output = [None]*nbOutput
 	y_true = [None]*nbOutput
 	y_pred = [None]*nbOutput
 
-	for j in range(2):
-		allclassifier.train()
+	for j in range(1):
+		loss = allclassifier.train()
 		mean = allclassifier.predictAll(X[0])
 
 		y_true[i], y_pred[i] = generatePrediction(allclassifier, X, Y)
 		acc = accuracy_score(y_true[i], y_pred[i]) * 100
-		print "epoch " + str(j) + " Accuracy: " + str(acc) + "%"
+		# acc = str(acc)
+		# print "epoch " + str(j) + " Accuracy: " + str(acc) + "%"
+
+		print("epoch: {0:<15.5g} Loss1: {1:<15.5g} Loss2: {2:<15.5g} Loss3: {3:<15.5g} Loss4: {4:<15.5g} Accuracy: {5:<15.5g}" \
+		.format(j, loss[0], loss[1], loss[2], loss[3], acc))
 
 
 main()

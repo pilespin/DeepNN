@@ -11,12 +11,11 @@ class Math(object):
 
 	def sigmoid_core(self, number):
 		if number >= 0:
-			nb = (math.e * number) / ((math.e * number) + 1)
-			return nb
-		elif number < 0:
+			tmp = math.e * number
+			nb = tmp / (tmp + 1)
+		else:
 			nb = 1 / (1 + (math.e - number))
-			return nb
-		exit(1)
+		return nb
 
 	def sigmoid(self, X):
 		Y = []
