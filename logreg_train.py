@@ -1,13 +1,14 @@
 #!/usr/bin/python
 
-import numpy as np
-import csv
-import sys	
-# import time
 from Dataset import *
 from Classifier import *
 from MultiClassifier import *
 from Math import *
+
+import numpy as np
+import csv
+import sys	
+
 from sklearn.metrics import accuracy_score
 
 # import matplotlib.pyplot as plt
@@ -16,7 +17,7 @@ np.set_printoptions(precision=4)
 
 def checkArg(argv):
 	if len(sys.argv) <= 1:
-		print "Missing file"
+		print("Missing file")
 		exit(1)
 
 	file = sys.argv[1]
@@ -24,7 +25,7 @@ def checkArg(argv):
 	try:
 		open(file, 'r')
 	except IOError:
-		print "Can't read: " + file
+		print("Can't read: " + file)
 		exit(1)
 	return (file)
 
@@ -43,7 +44,7 @@ def csvToArray(file):
 			Y.append(line[1])
 	
 	if len(X) != len(Y):
-		print "Error"
+		print("Error")
 		exit(1)
 	
 	return (X, Y)
@@ -99,7 +100,7 @@ def generateDataset(d, index=-1):
 	X = np.array(X)
 	Y = np.array(Y)
 	if len(X) != len(Y):
-		print "Error when generate dataset"
+		print("Error when generate dataset")
 		exit(1)
 	return X, Y
 
@@ -115,7 +116,7 @@ def generatePrediction(allclassifier, X, Y):
 			y_true.append(Y[i][0])
 
 	if len(y_true) != len(y_pred):
-		print "Error when generate prediction"
+		print("Error when generate prediction")
 		exit(1)
 
 	return y_true, y_pred
@@ -145,21 +146,30 @@ def main():
 		X[i], Y[i] = generateDataset(d, index=i+1)
 		allclassifier.addClassifier(X[i], Y[i])
 
-	print "train"
+	print("train")
 	y_true = [None]*nbOutput
 	y_pred = [None]*nbOutput
 
-	for j in range(1):
+	lr = 0.1
+	oldLoss = 0
+	allclassifier.setLr(0.001)
+	for j in range(9999):
 		loss = allclassifier.train()
-		mean = allclassifier.predictAll(X[0])
+		allLoss = loss.sum()
 
+		if oldLoss > allLoss and lr > 0.00001:
+			lr /= 10
+			print("DECREASE TO " + str(lr))
+			allclassifier.setLr(lr)
+
+		oldLoss = allLoss
 		y_true[i], y_pred[i] = generatePrediction(allclassifier, X, Y)
 		acc = accuracy_score(y_true[i], y_pred[i]) * 100
-		# acc = str(acc)
-		# print "epoch " + str(j) + " Accuracy: " + str(acc) + "%"
 
-		print("epoch: {0:<15.5g} Loss1: {1:<15.5g} Loss2: {2:<15.5g} Loss3: {3:<15.5g} Loss4: {4:<15.5g} Accuracy: {5:<15.5g}" \
-		.format(j, loss[0], loss[1], loss[2], loss[3], acc))
+		allclassifier.saveWeight()
+		
+		print("epoch: {0:<15.5g} Loss1: {1:<15.5g} Loss2: {2:<15.5g} Loss3: {3:<15.5g} Loss4: {4:<15.5g} LOSS: {5:<15.5g} Accuracy: {6:<15.5g}" \
+		.format(j, loss[0], loss[1], loss[2], loss[3], allLoss, acc))
 
 
 main()

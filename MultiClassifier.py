@@ -3,6 +3,8 @@
 from Math import *
 from Classifier import *
 
+from threading import Thread
+
 class MultiClassifier(Math):
 
 	allClassifier = []
@@ -25,7 +27,6 @@ class MultiClassifier(Math):
 		self.Y_train.append(Y)
 
 	def predictAll(self, X):
-		# m = Math()
 		out = []
 		for i,d in enumerate(self.allClassifier):
 			Y = []
@@ -35,16 +36,32 @@ class MultiClassifier(Math):
 		return np.array(out)
 
 	def train(self):
+		thread_list = []
 		allLoss = []
 		tmp = 0
 		for i,d in enumerate(self.allClassifier):
-			tmp += d.train(self.X_train[i], self.Y_train[i])
-			allLoss.append(tmp)
+			t = Thread(target=d.train, args=(self.X_train[i], self.Y_train[i]))
+			t.start()
+			thread_list.append(t)
+
+		for thread in thread_list:
+			thread.join()
+		for i,d in enumerate(self.allClassifier):
+			allLoss.append(d.getLoss())
+
 		return np.array(allLoss)
 
 	def getMax(self, X):
 		pr = self.predictAll(X)
 		return self.m.argMax(pr)
 
+	def setLr(self, lr):
+		for i,d in enumerate(self.allClassifier):
+			d.setLr(lr)
+
+	def saveWeight(self):
+		with open('weight', 'w') as file:
+			for i,d in enumerate(self.allClassifier):
+				file.write(str(d.getWeight()) + "\n")
 
 	################################## GET ##################################

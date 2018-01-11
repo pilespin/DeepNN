@@ -1,18 +1,19 @@
 #!/usr/bin/python
 
+from Math import *
+
 import csv
 import sys
-# import math
 import numpy as np
-from Math import *
 
 class Classifier(Math):
 
 	m 			= 0
-	lr 			= 0.1
+	lr 			= 0.00001
 	nbInput		= 0
 	nbOutput	= 0
 	weight		= []
+	loss 		= 0
 
 	def __init__(self, nbInput, nbOutput):
 		np.set_printoptions(precision=4)
@@ -23,11 +24,11 @@ class Classifier(Math):
 		self.printInfo()
 
 	def printInfo(self):
-		print "lr: " + str(self.lr)
-		print "nbInput: " + str(self.nbInput)
-		print "nbOutput: " + str(self.nbOutput)
-		print "weight: " + str(self.weight)
-		print "-----------"
+		print("lr: " + str(self.lr))
+		print("nbInput: " + str(self.nbInput))
+		print("nbOutput: " + str(self.nbOutput))
+		print("weight: " + str(self.weight))
+		print("-----------")
 
 	def updateLr(self, j, loss):
 		if loss > 0:
@@ -48,23 +49,29 @@ class Classifier(Math):
 	def train(self, X, Y):
 		self.m = len(X)
 
-		allLoss = 0
+		self.loss = 0
 		for i,data in enumerate(self.weight):
 			for x in X:
 				sigma = self.sigma(X, Y, i)
 				loss = (sigma / self.m)
-				allLoss += loss
+				self.loss += loss
 				self.updateLr(i, loss)
-		return allLoss
-			# print self.weight
-				# print("Th0: {0:<15.5g} Th1: {1:<15.5g} Loss Th0: {2:<15.5g} Th1: {3:<15.5g} Epoch: {4:}" \
-		# .format(th0, th1, lossTh0, lossTh1, epoch))
-			# sys.stdout.write('.')
-			# sys.stdout.flush()
-		# print ""
+		return self.loss
+		# sys.stdout.write('.')
+		# sys.stdout.flush()
+		# print("")
 
 	def predict(self, X):
 		m = Math()
 		return m.sigmoid_core(m.sigmoid(X*self.weight).sum())
 
 	################################## GET ##################################
+
+	def getLoss(self):
+		return self.loss
+
+	def getWeight(self):
+		return self.weight
+
+	def setLr(self, lr):
+		self.lr = lr

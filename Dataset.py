@@ -30,7 +30,7 @@ class Dataset(Math):
 
 	def getFeature(self, index, column=-1, name='', uniq=False):
 		if index >= self._len_X:
-			print "Error: Out of bound trying to get element at index " + str(index)
+			print("Error: Out of bound trying to get element at index " + str(index))
 			exit(1)
 
 		X = []
@@ -123,7 +123,7 @@ class Dataset(Math):
 	def medianArray(self, X):
 		m = len(X)
 		if m <= 0:
-			print "Error when getting quartile array size of " + str(m)	
+			print("Error when getting quartile array size of " + str(m))
 			exit(1)
 		if m == 1:
 			return [X[0]], [X[0]], X[0]
@@ -155,10 +155,10 @@ class Dataset(Math):
 	################################## PRINT ##################################
 
 	def printFeatureHeader(self): 
-		print "                                         Count           Std             Mean            Min             25%             50%             75%             Max"
+		print("                                         Count           Std             Mean            Min             25%             50%             75%             Max")
 
 	def printAllFeature(self):
-		for i in range(len(self._X[0])):
+		for i in xrange(len(self._X[0])):
 			self.printFeature(i)
 
 	def printFeature(self, index):
