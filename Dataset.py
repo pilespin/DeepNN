@@ -29,7 +29,7 @@ class Dataset(Math):
 		return None
 
 	def getFeature(self, index, column=-1, name='', uniq=False):
-		if index >= self._len_X:
+		if index > self._len_X:
 			print("Error: Out of bound trying to get element at index " + str(index))
 			exit(1)
 

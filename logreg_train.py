@@ -14,6 +14,7 @@ from sklearn.metrics import accuracy_score
 # import matplotlib.pyplot as plt
 
 np.set_printoptions(precision=4)
+np.set_printoptions(suppress=True)
 
 def checkArg(argv):
 	if len(sys.argv) <= 1:
@@ -112,14 +113,15 @@ def generatePrediction(allclassifier, X, Y):
 	for i,x in enumerate(X):
 		for j,y in enumerate(x):
 			output = allclassifier.getMax(y) + 1
+
 			y_pred.append(output)
-			y_true.append(Y[i][0])
+			y_true.append(Y[i][j][0])
 
 	if len(y_true) != len(y_pred):
 		print("Error when generate prediction")
 		exit(1)
 
-	return y_true, y_pred
+	return np.array(y_true), np.array(y_pred)
 
 
 ##############################
@@ -146,30 +148,36 @@ def main():
 		X[i], Y[i] = generateDataset(d, index=i+1)
 		allclassifier.addClassifier(X[i], Y[i])
 
-	print("train")
-	y_true = [None]*nbOutput
-	y_pred = [None]*nbOutput
+	y_true, y_pred = generatePrediction(allclassifier, X, Y)
 
-	lr = 0.1
-	oldLoss = 0
-	allclassifier.setLr(0.001)
+	# lr = 1
+	# oldLoss = 0
+	allclassifier.setLr(0.05)
+
 	for j in range(9999):
 		loss = allclassifier.train()
+		# pr = allclassifier.predictAll(X[0][0])
+		# print(pr)
 		allLoss = loss.sum()
 
-		if oldLoss > allLoss and lr > 0.00001:
-			lr /= 10
-			print("DECREASE TO " + str(lr))
-			allclassifier.setLr(lr)
+		# if abs(oldLoss) > abs(allLoss) and lr > 0.00001:
+		# 	lr /= 10
+		# 	print("DECREASE TO " + str(lr))
+		# 	allclassifier.setLr(lr)
+		# oldLoss = allLoss
 
-		oldLoss = allLoss
-		y_true[i], y_pred[i] = generatePrediction(allclassifier, X, Y)
-		acc = accuracy_score(y_true[i], y_pred[i]) * 100
+
+		# aa = allclassifier.predictAll(X)
+		# print(str(aa))
 
 		allclassifier.saveWeight()
 		
-		print("epoch: {0:<15.5g} Loss1: {1:<15.5g} Loss2: {2:<15.5g} Loss3: {3:<15.5g} Loss4: {4:<15.5g} LOSS: {5:<15.5g} Accuracy: {6:<15.5g}" \
-		.format(j, loss[0], loss[1], loss[2], loss[3], allLoss, acc))
+		print(y_true)
+		print(y_pred)
+
+		acc = accuracy_score(y_true, y_pred) * 100
+		# print("epoch: {0:<15.5g} Loss1: {1:<15.5g} Loss2: {2:<15.5g} Loss3: {3:<15.5g} Loss4: {4:<15.5g} LOSS: {5:<15.5g} Accuracy: {6:<15.5g}" \
+		# .format(j, loss[0], loss[1], loss[2], loss[3], allLoss, acc))
 
 
 main()
