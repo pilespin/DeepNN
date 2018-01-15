@@ -41,11 +41,11 @@ class Classifier(Math):
 
 	def sigma(self, X, Y, j):
 
-		print (X)
+		# print (X)
 		i = 0
 		sigma = 0.0
 		while i < self.m:
-			print (X[i])
+			# print (X[i])
 			Htheta = np.sum(self.predict(X[i]))
 			sigma += (Htheta - 1) * X[i][j]
 			i+=1
@@ -55,22 +55,25 @@ class Classifier(Math):
 		self.m = len(X)
 		print (self.m)
 
-		self.loss = 0
-
-		th = []
+		allLoss = []
 		for i,data in enumerate(self.weight):
-			weightLoss = 0
-			# for x in X:
-				# print(x)
+			print (i)
 			sigma = self.sigma(X, Y, i)
+			print (sigma)
+			print (self.m)
 			loss = (sigma / self.m)
-			weightLoss += loss
+			allLoss.append(loss)
 
+		print (allLoss)
+
+		self.loss = 0
+		for i,loss in enumerate(allLoss):
 			if oposite == True:
-				self.updateLr(i, -weightLoss *0.1)
+				self.updateLr(i, -loss * 0.1)
 			else:
-				self.updateLr(i, weightLoss)
-				self.loss += weightLoss
+				self.updateLr(i, loss)
+				self.loss += loss
+		# exit(0)
 		
 		# sys.stdout.write('.')
 		# sys.stdout.flush()
