@@ -7,19 +7,24 @@ import sys
 import numpy as np
 from random import randint
 
+# np.set_printoptions(precision=4)
+# np.set_printoptions(suppress=True)
+
 class Classifier(Math):
 
 	mt			= None
 	m 			= 0
 	lr 			= 0
 	nbInput		= 0
+	number		= 0
 	# nbOutput	= 0
 	weight		= []
 	loss 		= 0
 
-	def __init__(self, nbInput):
+	def __init__(self, nbInput, number):
 		np.set_printoptions(precision=4)
 		self.nbInput = nbInput
+		self.number = number
 		# self.nbOutput = nbOutput
 
 		self.weight = np.ones(self.nbInput, dtype=float)
@@ -27,53 +32,73 @@ class Classifier(Math):
 		self.mt = Math()
 
 	def printInfo(self):
+		print("classifier " + str(self.number) + ":")
 		print("lr: " + str(self.lr))
 		print("nbInput: " + str(self.nbInput))
 		# print("nbOutput: " + str(self.nbOutput))
 		print("weight: " + str(self.weight))
 		print("-----------")
 
-	def updateLr(self, j, loss):
+	def updateLr(self, i, loss):
+		# self.weight[i] += loss
+
 		if loss > 0:
-			self.weight[j] -= self.lr
+			self.weight[i] -= self.lr
 		else:
-			self.weight[j] += self.lr
+			self.weight[i] += self.lr
 
-	def sigma(self, X, Y, j):
+	def sigma(self, X, Y, classifierNb, thNb):
 
-		# print (X)
+		# print ("INC: " + str(classifierNb))
 		i = 0
 		sigma = 0.0
 		while i < self.m:
-			# print (X[i])
+
 			Htheta = np.sum(self.predict(X[i]))
-			sigma += (Htheta - 1) * X[i][j]
+			
+			# print (X[i])
+			# print(classifierNb)
+			# print ("OUT: " + str(Y[i]) + "EXT: " + str(X[i][thNb]))
+
+			if classifierNb == Y[i]:
+				y = 1
+				sigma += (Htheta - 1) 
+				# print ("TRUE")
+			else:
+				# sigma -= 1
+				y = 0
+				# sigma += (1 - Htheta) 
+				# sigma += (Htheta - y) * X[i][thNb]
+				# sigma += (1-Htheta) * X[i][thNb]
+				# print ("FALSE")
+
+			# sigma += (Htheta - y) * X[i][thNb]
 			i+=1
+		# print "---------"
+		# print sigma
+		# print "---------"
 		return sigma
 
-	def train(self, X, Y, oposite=False):
+	def train(self, X, Y, classifierNb):
 		self.m = len(X)
-		print (self.m)
-
+		# print (self.m)
 		allLoss = []
-		for i,data in enumerate(self.weight):
-			print (i)
-			sigma = self.sigma(X, Y, i)
-			print (sigma)
-			print (self.m)
-			loss = (sigma / self.m)
+		for th,dt in enumerate(self.weight):
+			sigma = self.sigma(X, Y, classifierNb, th)
+			loss = sigma / self.m
 			allLoss.append(loss)
+		# print(np.array(allLoss))
+		# print allLoss
 
-		print (allLoss)
-
-		self.loss = 0
+		# self.loss = 0
 		for i,loss in enumerate(allLoss):
-			if oposite == True:
-				self.updateLr(i, -loss * 0.1)
-			else:
-				self.updateLr(i, loss)
-				self.loss += loss
+		# 	if oposite == True:
+				# self.updateLr(i, -loss * 0.1)
+		# 	else:
+			self.updateLr(i, loss)
+		# 		self.loss += loss
 		# exit(0)
+		return (np.array(allLoss).sum())
 		
 		# sys.stdout.write('.')
 		# sys.stdout.flush()
@@ -81,7 +106,8 @@ class Classifier(Math):
 	def predict(self, X):
 		# m = Math()
 		# return m.sigmoid_core(m.sigmoid(X*self.weight).sum())
-		tmp = (X*self.weight).sum()
+		# tmp = (X*self.weight).sum()
+		tmp = X * self.weight
 		return self.mt.sigmoid_core(tmp.sum())
 		# return tmp.sum()
 
