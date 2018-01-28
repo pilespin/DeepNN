@@ -14,7 +14,7 @@ from sklearn.metrics import accuracy_score
 # import matplotlib.pyplot as plt
 
 # np.set_printoptions(precision=4)
-# np.set_printoptions(suppress=True)
+np.set_printoptions(suppress=True)
 
 def checkArg(argv):
 	if len(sys.argv) <= 1:
@@ -66,21 +66,27 @@ def getIndex(X, querie):
 
 def getInputInDataset(d, index, inFloat=False):
 	start = 6
-	end = 18
+	end = 8
 
 	X = []
 	if inFloat == True:
-		while start <= end:
-			tmp = d.getDataset()[index][start]
+		for i in range(start, end+1):
+			# print i
+			# exit(0)
+			# while start <= end:
+			tmp = d.getDataset()[index][i]
+			# print tmp
 			if len(tmp) > 0:
-				X.append(float(d.getDataset()[index][start]))
+				X.append(float(tmp))
 			else:
 				X.append(float(0))
-			start += 1
+			# start += 1
+		# print X
+		# exit(0)
 	else:
-		while start <= end:
-			X.append(d.getDataset()[index][start])
-			start += 1
+		for i in range(start, end+1):
+			X.append(d.getDataset()[index][i])
+
 	return np.array(X)
 
 def generateDataset(d, index=-1):
@@ -96,7 +102,7 @@ def generateDataset(d, index=-1):
 
 		if index == -1 or (y == index):
 			X.append(x)
-			Y.append([y])
+			Y.append(y)
 
 	X = np.array(X)
 	Y = np.array(Y)
@@ -110,14 +116,13 @@ def generatePrediction(allclassifier, X, Y):
 	y_true = []
 	m = Math()
 
-	for i,x in enumerate(X):
-		# for j,y in enumerate(x):
-		output = allclassifier.getMax(x) + 1
-		# print output
+	for i,data in enumerate(X):
+		output = allclassifier.getMax(data) + 1
+		# print "PREDICT: " + str(output)
 		# print Y[i][0]
 
 		y_pred.append(output)
-		y_true.append(Y[i][0])
+		y_true.append(Y[i])
 
 	if len(y_true) != len(y_pred):
 		print("Error when generate prediction")
@@ -132,8 +137,8 @@ def generatePrediction(allclassifier, X, Y):
 
 def main():
 
-	nbInput = 13
-	nbOutput = 4
+	nbInput = 3
+	nbOutput = 2
 
 	file = checkArg(sys.argv)
 
@@ -144,22 +149,31 @@ def main():
 
 	X, Y = generateDataset(d)
 
+	print X
+	print "------------"
+	print Y
+	print "------------"
+
 	for i in range(nbOutput):
 		allclassifier.addClassifier(i)
 
 	oldLoss = 0
-	allclassifier.setLr(0.01)
+	allclassifier.setLr(1)
 
-	for j in range(9999):
+	allclassifier.printInfo()
+	# exit(0)
+
+	for j in range(99):
 		loss = allclassifier.train(X, Y)
-		pr = allclassifier.predictAll(X[0])
-		mx = allclassifier.getMax(X[0])
-		print(pr)
-		print(mx)
-		pr = allclassifier.predictAll(X[1])
-		mx = allclassifier.getMax(X[1])
-		print(pr)
-		print(mx)
+		# exit(0)
+		# pr = allclassifier.predictAll(X[0])1
+		# mx = allclassifier.getMax(X[0])
+		# print(pr)
+		# print(mx)
+		# pr = allclassifier.predictAll(X[1])
+		# mx = allclassifier.getMax(X[1])
+		# print(pr)
+		# print(mx)
 		allLoss = loss.sum()
 		# print ('-----------------')
 		# print (allLoss)
@@ -183,14 +197,14 @@ def main():
 	
 		y_true, y_pred = generatePrediction(allclassifier, X, Y)
 
-		# print(y_true)
-		# print(y_pred)
+		print(y_true)
+		print(y_pred)
 
 		acc = accuracy_score(y_true, y_pred) * 100
 		# print("epoch: {0:<15.5g} LOSS: {1:<15.5g} Accuracy: {2:<15.5g}" \
 		# .format(j, allLoss, acc))
 		print("epoch: {0:<15.5g} Loss1: {1:<15.5g} Loss2: {2:<15.5g} Loss3: {3:<15.5g} Loss4: {4:<15.5g} LOSS: {5:<15.5g} Accuracy: {6:<15.5g}" \
-		.format(j, loss[0], loss[1], loss[2], loss[3], allLoss, acc))
+		.format(j, loss[0], loss[1], loss[1], loss[1], allLoss, acc))
 
 
 main()

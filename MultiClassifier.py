@@ -20,6 +20,10 @@ class MultiClassifier(Math):
 		self.nbInput = nbInput
 		self.m = Math()
 
+	def printInfo(self):
+		for i in self.allClassifier:
+			i.printInfo()
+
 	def addClassifier(self, number):
 		cl = Classifier(self.nbInput, number)
 		self.allClassifier.append(cl)
@@ -28,10 +32,11 @@ class MultiClassifier(Math):
 	def predictAll(self, X):
 		out = []
 		for i,d in enumerate(self.allClassifier):
-			Y = []
-			for x in X:
-				Y.append(d.predict(x))
-			out.append(self.m.mean(Y))
+			# Y = []
+			# for x in X:
+				# Y.append(d.predict(x))
+			# out.append(self.m.mean(Y))
+			out.append(d.predict(X))
 		return np.array(out)
 
 	def train(self, X, Y):
@@ -79,7 +84,7 @@ class MultiClassifier(Math):
 
 	def getMax(self, X):
 		pr = self.predictAll(X)
-		# print(pr)
+		print("PREDICT ALL: " + str(pr))
 		return self.m.argMax(pr)
 
 	def setLr(self, lr):
