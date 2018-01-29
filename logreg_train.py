@@ -65,8 +65,9 @@ def getIndex(X, querie):
 	return -1
 
 def getInputInDataset(d, index, inFloat=False):
-	start = 6
-	end = 8
+	global nbInput
+	global start
+	end = start + nbInput - 1
 
 	X = []
 	if inFloat == True:
@@ -135,10 +136,11 @@ def generatePrediction(allclassifier, X, Y):
 ############ MAIN ############
 ##############################
 
-def main():
+nbInput = 3
+nbOutput = 4
+start = 6
 
-	nbInput = 3
-	nbOutput = 2
+def main():
 
 	file = checkArg(sys.argv)
 
@@ -157,54 +159,33 @@ def main():
 	for i in range(nbOutput):
 		allclassifier.addClassifier(i)
 
+	lr = 1.0
 	oldLoss = 0
-	allclassifier.setLr(1)
+	allclassifier.setLr(lr)
 
 	allclassifier.printInfo()
-	# exit(0)
 
-	for j in range(99):
+	for j in range(20000):
 		loss = allclassifier.train(X, Y)
-		# exit(0)
-		# pr = allclassifier.predictAll(X[0])1
-		# mx = allclassifier.getMax(X[0])
-		# print(pr)
-		# print(mx)
-		# pr = allclassifier.predictAll(X[1])
-		# mx = allclassifier.getMax(X[1])
-		# print(pr)
-		# print(mx)
+
 		allLoss = loss.sum()
-		# print ('-----------------')
-		# print (allLoss)
-		# print (loss)
 
-		# if abs(oldLoss) > abs(allLoss) and lr > 0.00001:
-		# 	lr /= 10
-		# 	print("DECREASE TO " + str(lr))
-		# 	allclassifier.setLr(lr)
-		# oldLoss = allLoss
-
-
-		# aa = allclassifier.predictAll(X)
-		# print(str(aa))
+		if abs(oldLoss) > abs(allLoss) and lr > 0.000000001:
+			lr /= 10
+			print("DECREASE TO " + str(lr))
+			allclassifier.setLr(lr)
+		oldLoss = allLoss
 
 		allclassifier.saveWeight()
 		
-		# print(y_true)
-		# print(y_pred)
-		# print(loss)
-	
 		y_true, y_pred = generatePrediction(allclassifier, X, Y)
 
-		print(y_true)
-		print(y_pred)
+		# print(y_true)
+		# print(y_pred)
 
 		acc = accuracy_score(y_true, y_pred) * 100
-		# print("epoch: {0:<15.5g} LOSS: {1:<15.5g} Accuracy: {2:<15.5g}" \
-		# .format(j, allLoss, acc))
-		print("epoch: {0:<15.5g} Loss1: {1:<15.5g} Loss2: {2:<15.5g} Loss3: {3:<15.5g} Loss4: {4:<15.5g} LOSS: {5:<15.5g} Accuracy: {6:<15.5g}" \
-		.format(j, loss[0], loss[1], loss[1], loss[1], allLoss, acc))
+		print("epoch: {0:<15.5g} Loss1: {1:<15.5g} Loss2: {2:<15.5g} Loss3: {3:<15.5g} Loss4: {4:<15.5g} LOSS: {5:<15.5g} Accuracy: {6:<g}%" \
+		.format(j, loss[0], loss[1], loss[2], loss[3], allLoss, acc))
 
 
 main()

@@ -14,8 +14,6 @@ class MultiClassifier(Math):
 	m = None
 
 	def __init__(self, nbInput, nbOutput):
-		# np.set_printoptions(precision=4)
-		# np.set_printoptions(suppress=True)
 		self.nbOutput = nbOutput
 		self.nbInput = nbInput
 		self.m = Math()
@@ -32,51 +30,34 @@ class MultiClassifier(Math):
 	def predictAll(self, X):
 		out = []
 		for i,d in enumerate(self.allClassifier):
-			# Y = []
-			# for x in X:
-				# Y.append(d.predict(x))
-			# out.append(self.m.mean(Y))
 			out.append(d.predict(X))
 		return np.array(out)
 
 	def train(self, X, Y):
 
-		allLoss = []
-		for i,d in enumerate(self.allClassifier):
-			# print("TRAIN" + str(i))
-			loss = d.train(X, Y, i)
-			allLoss.append(loss)
-
-		# print (self.X_train[0])
-		# print (self.X_train[1])
-		# print (self.X_train[2])
-		# print (self.X_train[3])
-		# exit(0)
-
-		# thread_list = []
+		### Without thread
 		# allLoss = []
 		# for i,d in enumerate(self.allClassifier):
+		# 	# print("TRAIN" + str(i))
+		# 	loss = d.train(X, Y, i)
+		# 	allLoss.append(loss)
 
-		# 	a = list(range(0, self.getNbClassifier()))
-		# 	a.remove(i)
-		# 	for j in a:
-		# 		d.train(self.X_train[j], self.Y_train[j], oposite=True)
-		# 		# d.train(self.X_train[j], self.Y_train[j], oposite=True)
+		##########################################################
 
-		# 	# print(str("--") + str(i) + str(self.Y_train[i]))
-		# 	t = Thread(target=d.train, args=(self.X_train[i], self.Y_train[i]))
-		# 	# t = Thread(target=d.train, args=(self.X_train[i], self.Y_train[i]))
-		# 	# d.train(self.X_train[i], self.Y_train[i], oposite=True)
-		# 	t.start()
-		# 	# t.join()
-		# 	thread_list.append(t)
+		thread_list = []
+		allLoss = []
+		for i,d in enumerate(self.allClassifier):
 
-		# for thread in thread_list:
-		# 	thread.join()
-		# for i,d in enumerate(self.allClassifier):
-		# 	allLoss.append(d.getLoss())
+			t = Thread(target=d.train, args=(X, Y, i))
+			t.start()
+			thread_list.append(t)
 
-		# return np.array(allLoss)
+		for thread in thread_list:
+			thread.join()
+
+		for i,d in enumerate(self.allClassifier):
+			allLoss.append(d.getLoss())
+
 		return np.array(allLoss)
 
 	def getNbClassifier(self):
@@ -84,7 +65,7 @@ class MultiClassifier(Math):
 
 	def getMax(self, X):
 		pr = self.predictAll(X)
-		print("PREDICT ALL: " + str(pr))
+		# print("PREDICT ALL: " + str(pr))
 		return self.m.argMax(pr)
 
 	def setLr(self, lr):
