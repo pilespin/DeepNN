@@ -36,7 +36,7 @@ class Classifier(Math):
 
 	def updateLr(self, i, loss):
 		# print "LOSS: " + str(loss)
-		self.weight[i] -= loss
+		self.weight[i] -= self.lr * loss
 
 		# if loss > 0:
 		# 	self.weight[i] -= self.lr

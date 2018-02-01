@@ -120,6 +120,22 @@ class Dataset(Math):
 				m = new
 		return m
 
+	def min2D(self, X):
+		allMin = []
+
+		for i in X:
+			allMin.append(self.min(i))
+
+		return self.min(allMin)
+
+	def max2D(self, X):
+		allMax = []
+
+		for i in X:
+			allMax.append(self.max(i))
+
+		return self.max(allMax)
+
 	def medianArray(self, X):
 		m = len(X)
 		if m <= 0:

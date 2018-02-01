@@ -14,6 +14,7 @@ from sklearn.metrics import accuracy_score
 # import matplotlib.pyplot as plt
 
 # np.set_printoptions(precision=4)
+np.set_printoptions(threshold='nan')
 np.set_printoptions(suppress=True)
 
 def checkArg(argv):
@@ -131,12 +132,50 @@ def generatePrediction(allclassifier, X, Y):
 
 	return np.array(y_true), np.array(y_pred)
 
+def featureRescaleCore(x, min, max):
+	ret = 1.0*(x - (min)) / (max - min)
+	return ret
+
+def featureRescale(d, X):
+	min = d.min2D(X)
+	max = d.max2D(X)
+	newX = []
+
+	for i,data1 in enumerate(X):
+		for j,data2 in enumerate(data1):
+			X[i][j] = featureRescaleCore(data2, min, max)
+	return X
+
+def featureExpand(d, X):
+	global nbInput
+	newX = []
+
+	for i,data1 in enumerate(X):
+		tmp = []
+		for j in data1:
+			tmp.append(j)
+
+		# for k in range(1, len(data1)-1):
+		for k in [10,11,13,14,17]:
+
+			for j in range(len(data1)-1):
+				tmp.append(data1[k-6]*data1[j+1])
+
+		# for j in range(len(data1)-1):
+		# 	tmp.append(data1[1]*data1[j+1])
+
+
+
+		nbInput = len(tmp)
+		newX.append(tmp) 
+
+	return np.array(newX)
 
 ##############################
 ############ MAIN ############
 ##############################
 
-nbInput = 3
+nbInput = 13
 nbOutput = 4
 start = 6
 
@@ -147,19 +186,25 @@ def main():
 	d = Dataset()
 	d.loadFile(file)
 
-	allclassifier = MultiClassifier(nbInput, nbOutput)
 
 	X, Y = generateDataset(d)
 
-	print X
-	print "------------"
-	print Y
-	print "------------"
+	# print X
+	# print "------------"
+	# print Y
+	# print "------------"
+
+	X = featureExpand(d, X)
+	X = featureRescale(d, X)
+	# print "----------------"
+	# print X
+	# exit(0)
+	allclassifier = MultiClassifier(nbInput, nbOutput)
 
 	for i in range(nbOutput):
 		allclassifier.addClassifier(i)
 
-	lr = 1.0
+	lr = 1000.0
 	oldLoss = 0
 	allclassifier.setLr(lr)
 
@@ -170,11 +215,11 @@ def main():
 
 		allLoss = loss.sum()
 
-		if abs(oldLoss) > abs(allLoss) and lr > 0.000000001:
-			lr /= 10
-			print("DECREASE TO " + str(lr))
-			allclassifier.setLr(lr)
-		oldLoss = allLoss
+		# if abs(oldLoss) > abs(allLoss) and lr > 0.000000001:
+		# 	lr /= 10
+		# 	print("DECREASE TO " + str(lr))
+		# 	allclassifier.setLr(lr)
+		# oldLoss = allLoss
 
 		allclassifier.saveWeight()
 		

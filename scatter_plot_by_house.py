@@ -34,42 +34,43 @@ def main():
 
 	d.loadFile(file)
 
-	index = 11
+	# index = 11
 
-	x1 = d.getFeature(index)
-	x2 = d.getFeature(index+1)
-	x3 = d.getFeature(index+2)
-	x4 = d.getFeature(index+3)
+	for index in range(6, 19):
 
-	x1s = sorted(d.getFeature(index))
-	x2s = sorted(d.getFeature(index+1))
-	x3s = sorted(d.getFeature(index+2))
-	x4s = sorted(d.getFeature(index+3))
+		x1 = d.getFeature(index, 1, 'Gryffindor')
+		x2 = d.getFeature(index, 1, 'Hufflepuff')
+		x3 = d.getFeature(index, 1, 'Ravenclaw')
+		x4 = d.getFeature(index, 1, 'Slytherin')
 
-	ax = plt.subplot(1, 1, 1)
-	plt.tight_layout()
-	ax.set_xlim([-10, len(x1) + 10])
+		x1s = sorted(d.getFeature(index, 1, 'Gryffindor'))
+		x2s = sorted(d.getFeature(index, 1, 'Hufflepuff'))
+		x3s = sorted(d.getFeature(index, 1, 'Ravenclaw'))
+		x4s = sorted(d.getFeature(index, 1, 'Slytherin'))
 
-	plt.scatter(np.arange(len(x1)), x1, c='b', alpha=0.5, label='Gryffindor')
-	plt.scatter(np.arange(len(x2)), x2, c='g', alpha=0.5, label='Hufflepuff')
-	plt.scatter(np.arange(len(x3)), x3, c='c', alpha=0.5, label='Ravenclaw')
-	plt.scatter(np.arange(len(x4)), x4, c='r', alpha=0.5, label='Slytherin')
+		ax = plt.subplot(1, 1, 1)
+		plt.tight_layout()
+		ax.set_xlim([-10, len(x1) + 10])
 
-	plt.scatter(np.arange(len(x1)), x1s, c='b', alpha=0.5)
-	plt.scatter(np.arange(len(x2)), x2s, c='g', alpha=0.5)
-	plt.scatter(np.arange(len(x3)), x3s, c='c', alpha=0.5)
-	plt.scatter(np.arange(len(x4)), x4s, c='r', alpha=0.5)
+		plt.scatter(np.arange(len(x1)), x1, c='b', alpha=0.5, label='Gryffindor')
+		plt.scatter(np.arange(len(x2)), x2, c='g', alpha=0.5, label='Hufflepuff')
+		plt.scatter(np.arange(len(x3)), x3, c='c', alpha=0.5, label='Ravenclaw')
+		plt.scatter(np.arange(len(x4)), x4, c='r', alpha=0.5, label='Slytherin')
 
-	plt.title(d.getName(index))
-	plt.ylabel('Worst <---> Best')
-	plt.xlabel('Evaluation')
+		plt.scatter(np.arange(len(x1)), x1s, c='b', alpha=0.5)
+		plt.scatter(np.arange(len(x2)), x2s, c='g', alpha=0.5)
+		plt.scatter(np.arange(len(x3)), x3s, c='c', alpha=0.5)
+		plt.scatter(np.arange(len(x4)), x4s, c='r', alpha=0.5)
 
-	plt.legend()
-	plt.tight_layout()
-	# plt.set_xlim([-10, len(x1) + 10])
-	plt.show()
+		plt.title(d.getName(index))
+		plt.ylabel('Worst <---> Best')
+		plt.xlabel('Evaluation')
+
+		plt.legend()
+		plt.tight_layout()
+		# plt.set_xlim([-10, len(x1) + 10])
+		plt.show()
 
 
 
 main()
-
