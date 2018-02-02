@@ -62,16 +62,11 @@ class Classifier(Math):
 				sigma += tmp
 				# print "    EQUAL: " + str(tmp)
 			# else:
-			# 	Htheta = self.predict(-X[i])
-			# 	# y = 0
-			# 	tmp = np.log(Htheta)  * -X[i][thNb]
-			# 	sigma += tmp
+				# Htheta = self.predict(X[i])
+				# m += 1
+				# tmp = np.log(1-Htheta) * X[i][thNb]
+				# sigma += tmp
 				# print "NOT EQUAL: " + str(tmp)
-
-				# sigma += (1 - Htheta) 
-				# sigma += (Htheta - y) * X[i][thNb]
-				# sigma += (1-Htheta) * X[i][thNb]
-				# print ("FALSE")
 
 		return sigma / m
 

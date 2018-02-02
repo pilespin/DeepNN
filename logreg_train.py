@@ -65,33 +65,28 @@ def getIndex(X, querie):
 			return int(i)
 	return -1
 
-def getInputInDataset(d, index, inFloat=False):
+def getInputInDataset(d, index, featuresId, inFloat=False):
 	global nbInput
-	global start
-	end = start + nbInput - 1
+	# global start
+	# end = start + nbInput - 1
 
 	X = []
 	if inFloat == True:
-		for i in range(start, end+1):
-			# print i
-			# exit(0)
-			# while start <= end:
+		for i in featuresId:
+		# for i in range(start, end+1):
 			tmp = d.getDataset()[index][i]
-			# print tmp
 			if len(tmp) > 0:
 				X.append(float(tmp))
 			else:
-				X.append(float(0))
-			# start += 1
-		# print X
-		# exit(0)
+				X.append(float(1))
 	else:
-		for i in range(start, end+1):
+		for i in featuresId:
+		# for i in range(start, end+1):
 			X.append(d.getDataset()[index][i])
 
 	return np.array(X)
 
-def generateDataset(d, index=-1):
+def generateDataset(d, featuresId, index=-1):
 
 	X = []
 	Y = []
@@ -99,7 +94,7 @@ def generateDataset(d, index=-1):
 	houseArray = d.getFeature(1, uniq=True)
 
 	for i in range(d.getLength()):
-		x = getInputInDataset(d, i, inFloat=True)
+		x = getInputInDataset(d, i, featuresId, inFloat=True)
 		y = getIndex(houseArray, getHouseByIndex(d, i))
 
 		if index == -1 or (y == index):
@@ -120,8 +115,6 @@ def generatePrediction(allclassifier, X, Y):
 
 	for i,data in enumerate(X):
 		output = allclassifier.getMax(data) + 1
-		# print "PREDICT: " + str(output)
-		# print Y[i][0]
 
 		y_pred.append(output)
 		y_true.append(Y[i])
@@ -155,19 +148,24 @@ def featureExpand(d, X):
 		for j in data1:
 			tmp.append(j)
 
-		# for k in range(1, len(data1)-1):
-		for k in [10,11,13,14,17]:
+		# tab = [2,3,4,5,7,8,11,12]
+		# tab = [4,5,7]
+		tab = [1,5,6,8,10,11,12]
 
-			for j in range(len(data1)-1):
-				tmp.append(data1[k-6]*data1[j+1])
+		for k in tab:
+		# for k in range(len(X[0])):
 
-		# for j in range(len(data1)-1):
-		# 	tmp.append(data1[1]*data1[j+1])
-
-
+			# for j in range(tab):
+			for j in range(len(X[0])-2):
+				# print str(k) + " * " + str(j+1)
+				if j+1 != k:
+					tmp.append(data1[k]*data1[j+1])
+				# if j+2 != k:
+					# tmp.append(data1[k]*data1[j+2])
 
 		nbInput = len(tmp)
 		newX.append(tmp) 
+		# exit(0)
 
 	return np.array(newX)
 
@@ -175,9 +173,8 @@ def featureExpand(d, X):
 ############ MAIN ############
 ##############################
 
-nbInput = 13
+nbInput = 0
 nbOutput = 4
-start = 6
 
 def main():
 
@@ -186,8 +183,10 @@ def main():
 	d = Dataset()
 	d.loadFile(file)
 
-
-	X, Y = generateDataset(d)
+	featuresId = range(6, 19)
+	# featuresId = [10,11,13,14,17,18]
+	# nbInput = len(featuresId)
+	X, Y = generateDataset(d, featuresId)
 
 	# print X
 	# print "------------"
@@ -205,7 +204,7 @@ def main():
 		allclassifier.addClassifier(i)
 
 	lr = 1000.0
-	oldLoss = 0
+	oldLoss = 9e+9
 	allclassifier.setLr(lr)
 
 	allclassifier.printInfo()
@@ -215,11 +214,11 @@ def main():
 
 		allLoss = loss.sum()
 
-		# if abs(oldLoss) > abs(allLoss) and lr > 0.000000001:
-		# 	lr /= 10
-		# 	print("DECREASE TO " + str(lr))
-		# 	allclassifier.setLr(lr)
-		# oldLoss = allLoss
+		if abs(allLoss) > abs(oldLoss) and lr > 0.000000001:
+			lr /= 10
+			print("DECREASE TO " + str(lr))
+			allclassifier.setLr(lr)
+		oldLoss = allLoss
 
 		allclassifier.saveWeight()
 		
