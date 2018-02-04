@@ -120,6 +120,14 @@ class Dataset(Math):
 				m = new
 		return m
 
+	def moy2D(self, X):
+		allMoy = []
+
+		for i in X:
+			allMoy.append(self.mean(i))
+
+		return self.max(allMoy)
+
 	def min2D(self, X):
 		allMin = []
 
@@ -135,6 +143,20 @@ class Dataset(Math):
 			allMax.append(self.max(i))
 
 		return self.max(allMax)
+
+	def std2D(self, X):
+		allStd = []
+		allMoy = []
+
+		for i in X:
+			allMoy.append(self.mean(i))
+
+		moy = self.mean(allMoy)
+
+		for i in X:
+			allStd.append(self.standardDeviation(i, moy))
+
+		return self.min(allStd)
 
 	def medianArray(self, X):
 		m = len(X)

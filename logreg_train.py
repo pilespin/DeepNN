@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from Dataset import *
 from Classifier import *
@@ -125,18 +125,36 @@ def generatePrediction(allclassifier, X, Y):
 
 	return np.array(y_true), np.array(y_pred)
 
-def featureRescaleCore(x, min, max):
-	ret = 1.0*(x - (min)) / (max - min)
+def rescaleCore(x, min, max):
+	m = Math()
+	# x = np.log(x)*10000
+	ret = 1.0*(((x - (min)) / (max - min)))
+	return ret
+
+def meanNormalization(x, moy, min, max):
+	m = Math()
+	ret = 1.0*(((x - (moy)) / (max - min)))+0.5
+	return ret
+
+def standardization(x, moy, std):
+	m = Math()
+	# x = np.log(x)
+	ret = 1.0*(((x - (moy)) / (std)))+0.5
 	return ret
 
 def featureRescale(d, X):
 	min = d.min2D(X)
 	max = d.max2D(X)
+	# moy = d.moy2D(X)
+	# std = d.std2D(X)
 	newX = []
 
 	for i,data1 in enumerate(X):
 		for j,data2 in enumerate(data1):
-			X[i][j] = featureRescaleCore(data2, min, max)
+			X[i][j] = rescaleCore(data2, min, max)
+			# X[i][j] = meanNormalization(data2, moy, min, max)
+			# tmp = standardization(data2, moy, std)
+			# X[i][j] = rescaleCore(tmp, -30, 30)
 	return X
 
 def featureExpand(d, X):
@@ -150,16 +168,22 @@ def featureExpand(d, X):
 
 		# tab = [2,3,4,5,7,8,11,12]
 		# tab = [4,5,7]
-		tab = [1,5,6,8,10,11,12]
+		# tab = [1,5,6,8,10,11,12]
 
-		for k in tab:
-		# for k in range(len(X[0])):
+		# l = len(tab)
+		# for k in tab:
+
+		l = len(X[0])
+		for k in range(l):
 
 			# for j in range(tab):
-			for j in range(len(X[0])-2):
+			for j in range(l):
+				# pass
 				# print str(k) + " * " + str(j+1)
-				if j+1 != k:
-					tmp.append(data1[k]*data1[j+1])
+				# if j+1 != k:
+					tmp.append(data1[k]*data1[j%l])
+					# tmp.append((data1[k]*data1[j%l]*data1[(j+1)%l]))
+					# tmp.append(data1[k]*data1[j+2])
 				# if j+2 != k:
 					# tmp.append(data1[k]*data1[j+2])
 
@@ -183,8 +207,8 @@ def main():
 	d = Dataset()
 	d.loadFile(file)
 
-	featuresId = range(6, 19)
-	# featuresId = [10,11,13,14,17,18]
+	featuresId = range(7, 19)
+	# featuresId = [12,14,16,17,18]
 	# nbInput = len(featuresId)
 	X, Y = generateDataset(d, featuresId)
 
@@ -195,9 +219,19 @@ def main():
 
 	X = featureExpand(d, X)
 	X = featureRescale(d, X)
-	# print "----------------"
-	# print X
-	# exit(0)
+
+	#################################################
+	# import matplotlib.pyplot as plt
+	# from numpy.random import rand
+
+	# fig, ax = plt.subplots()
+	# for i,dt in enumerate(X):
+	# 	plt.scatter(np.arange(len(X[i])), X[i], alpha=0.3, edgecolors='none')
+	# # plt.scatter(np.arange(len(X[3])), X[3], alpha=0.3, edgecolors='none')
+
+	# plt.show()
+
+	#################################################
 	allclassifier = MultiClassifier(nbInput, nbOutput)
 
 	for i in range(nbOutput):
