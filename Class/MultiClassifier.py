@@ -3,6 +3,7 @@
 from Math import *
 from Classifier import *
 
+import csv
 from threading import Thread
 
 class MultiClassifier(Math):
@@ -13,17 +14,20 @@ class MultiClassifier(Math):
 	nbClassifier = 0
 	m = None
 
-	def __init__(self, nbInput, nbOutput):
-		self.nbOutput = nbOutput
+	def __init__(self, nbInput, allOutput):
+		# print allOutput
+		self.nbOutput = len(allOutput)
 		self.nbInput = nbInput
 		self.m = Math()
+		for i,d in enumerate(allOutput):
+			self.addClassifier(i, d)
 
 	def printInfo(self):
 		for i in self.allClassifier:
 			i.printInfo()
 
-	def addClassifier(self, number):
-		cl = Classifier(self.nbInput, number)
+	def addClassifier(self, number, nameOutput):
+		cl = Classifier(self.nbInput, number, nameOutput)
 		self.allClassifier.append(cl)
 		self.nbClassifier = len(self.allClassifier)
 
@@ -73,11 +77,18 @@ class MultiClassifier(Math):
 			d.setLr(lr)
 
 	def saveWeight(self):
-		AllWeight = []
-		with open('weight', 'w') as file:
+		All = []
+		with open('weight', 'w+') as file:
 			for i,d in enumerate(self.allClassifier):
-				AllWeight.append(d.getWeight())
-				# file.write(str(d.getWeight()) + "\n")
-			file.write(str(np.array(AllWeight)) + "\n")
+				name = d.getOutputName()
+				weight = d.getWeight()
+				
+				tmp = []
+				tmp.append(name)
+				for i in weight:
+					tmp.append(i)
+				All.append(tmp)
 
-	################################## GET ##################################
+		with open('weight.csv', 'w+') as file:
+			csvWriter = csv.writer(file, delimiter=',')
+			csvWriter.writerows(All)

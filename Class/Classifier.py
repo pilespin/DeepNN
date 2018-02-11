@@ -19,10 +19,12 @@ class Classifier(Math):
 	number		= 0
 	weight		= []
 	loss 		= 0
+	nameOutput	= ""
 
-	def __init__(self, nbInput, number):
+	def __init__(self, nbInput, number, nameOutput):
 		self.nbInput = nbInput
 		self.number = number
+		self.nameOutput = nameOutput
 
 		# self.weight = np.ones(self.nbInput, dtype=float)
 		self.weight = np.random.uniform(low=0.999, high=1, size=(self.nbInput,))
@@ -85,6 +87,9 @@ class Classifier(Math):
 		return self.mt.sigmoid_core(tmp.sum())
 
 	################################## GET ##################################
+
+	def getOutputName(self):
+		return self.nameOutput
 
 	def getLoss(self):
 		return abs(self.loss)

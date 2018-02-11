@@ -17,23 +17,23 @@ from sklearn.metrics import accuracy_score
 np.set_printoptions(threshold='nan')
 np.set_printoptions(suppress=True)
 
-def csvToArray(file):
-	file = open(file, "r")
-	arr = csv.reader(file, delimiter=',')
+# def csvToArray(file):
+# 	file = open(file, "r")
+# 	arr = csv.reader(file, delimiter=',')
 
-	X = []
-	Y = []
+# 	X = []
+# 	Y = []
 
-	for i,line in enumerate(arr):
-		if i != 0:
-			X.append(line[0])
-			Y.append(line[1])
+# 	for i,line in enumerate(arr):
+# 		if i != 0:
+# 			X.append(line[0])
+# 			Y.append(line[1])
 	
-	if len(X) != len(Y):
-		print("Error")
-		exit(1)
+# 	if len(X) != len(Y):
+# 		print("Error")
+# 		exit(1)
 	
-	return (X, Y)
+# 	return (X, Y)
 
 #############################################################
 
@@ -171,7 +171,7 @@ def featureExpand(d, X):
 ##############################
 
 nbInput = 0
-nbOutput = 4
+nbOutput = 0
 epoch = 30
 
 def main():
@@ -188,10 +188,13 @@ def main():
 	X = featureExpand(d, X)
 	X = featureRescale(d, X)
 
-	allclassifier = MultiClassifier(nbInput, nbOutput)
+	houseArray = d.getFeature(1, uniq=True)
+	nbOutput = len(houseArray)
 
-	for i in range(nbOutput):
-		allclassifier.addClassifier(i)
+	allclassifier = MultiClassifier(nbInput, houseArray)
+
+	# for i in range(nbOutput):
+	# 	allclassifier.addClassifier(i, houseArray[i])
 
 	lr = 1000.0
 	oldLoss = 9e+9
