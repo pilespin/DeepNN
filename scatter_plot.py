@@ -1,17 +1,13 @@
 #!/usr/bin/python3
 
-import csv
 import sys
-import math
 
+sys.path.append('Class')
 from Dataset import *
 from IOHelper import *
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-import time
-import sys
 
 def addFeatureOnSubplot(index, X, name, indexSubplot):
 
@@ -32,8 +28,8 @@ def addFeatureOnSubplot(index, X, name, indexSubplot):
 
 	Xs = sorted(X)
 	clr = color[index]
-	plt.scatter(np.arange(len(X)), X, color=clr, alpha=0.5, label=name)
-	plt.scatter(np.arange(len(X)), Xs, color=clr, alpha=0.5)
+	plt.scatter(np.arange(len(X)), X, color=clr, s=10, alpha=0.3, label=name)
+	plt.scatter(np.arange(len(X)), Xs, color=clr, s=10, alpha=0.3)
 	plt.legend()
 	plt.ylabel('Worst <---> Best')
 	# plt.xlabel('Evaluation')
@@ -49,8 +45,6 @@ def main():
 	fig, axes = plt.subplots(figsize=(18,10))
 	fig.tight_layout()
 
-	# index = 6
-	# while index <= 18:
 	for index in range(6, 19):
 		
 		mean = d.mean(d.getFeature(index))
@@ -64,9 +58,6 @@ def main():
 			addFeatureOnSubplot(index, d.getFeature(index), d.getName(index), 3)
 		else:
 			addFeatureOnSubplot(index, d.getFeature(index), d.getName(index), 4)
-
-		index+=1
-
 
 	# plt.title(d.getName(index))
 

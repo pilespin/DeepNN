@@ -121,5 +121,7 @@ pip-selfcheck.json
 .DS_Store
 stat.txt
 weight
+scatter_plot.png
+stat.txt
 
 # End of https://www.gitignore.io/api/python,virtualenv

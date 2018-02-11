@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 
-import csv
-import sys
-import math
-
+from sys import path
+path.append('Class')
 from Dataset import *
 from IOHelper import *
 

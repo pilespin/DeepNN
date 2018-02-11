@@ -1,14 +1,15 @@
 #!/usr/bin/python3
 
+import numpy as np
+import csv
+import sys
+
+sys.path.append('Class')
 from Dataset import *
 from Classifier import *
 from MultiClassifier import *
 from Math import *
 from IOHelper import *
-
-import numpy as np
-import csv
-import sys	
 
 from sklearn.metrics import accuracy_score
 
