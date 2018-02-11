@@ -5,7 +5,7 @@ from Math import *
 import csv
 import sys
 import numpy as np
-from random import randint
+import random
 
 # np.set_printoptions(precision=4)
 # np.set_printoptions(suppress=True)
@@ -24,7 +24,8 @@ class Classifier(Math):
 		self.nbInput = nbInput
 		self.number = number
 
-		self.weight = np.ones(self.nbInput, dtype=float)
+		# self.weight = np.ones(self.nbInput, dtype=float)
+		self.weight = np.random.uniform(low=0.99999, high=1, size=(self.nbInput,))
 		self.mt = Math()
 
 	def printInfo(self):
@@ -56,16 +57,14 @@ class Classifier(Math):
 			# print ("CLASSIFIER: " + str(classifierNb) + " OUTPUT: " + str(Y[i]))
 
 			if classifierNb == Y[i]:
-				Htheta = self.predict(X[i])
 				m += 1
-				tmp = np.log(Htheta) * X[i][thNb]
-				sigma += tmp
-				# print "    EQUAL: " + str(tmp)
-			# else:
-				# Htheta = self.predict(X[i])
-				# m += 1
-				# tmp = np.log(1-Htheta) * X[i][thNb]
+				# sigma += (Htheta - 1) * X[i][thNb]
+				sigma += np.log(Htheta) * X[i][thNb]
 				# sigma += tmp
+			# else:
+				# m += 1
+				# tmp = (Htheta) * X[i][thNb]
+				# tmp = np.log(1-Htheta) * X[i][thNb]
 				# print "NOT EQUAL: " + str(tmp)
 
 		return sigma / m

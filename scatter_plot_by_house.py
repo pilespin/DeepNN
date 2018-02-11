@@ -14,7 +14,7 @@ import sys
 
 def checkArg(argv):
 	if len(sys.argv) <= 1:
-		print "Missing file"
+		print ("Missing file")
 		exit(1)
 
 	file = sys.argv[1]
@@ -22,7 +22,7 @@ def checkArg(argv):
 	try:
 		open(file, 'r')
 	except IOError:
-		print "Can't read: " + file
+		print("Can't read: " + file)
 		exit(1)
 	return (file)
 

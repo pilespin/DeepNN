@@ -78,7 +78,8 @@ def getInputInDataset(d, index, featuresId, inFloat=False):
 			if len(tmp) > 0:
 				X.append(float(tmp))
 			else:
-				X.append(float(1))
+				return None
+				# X.append(float(1))
 	else:
 		for i in featuresId:
 		# for i in range(start, end+1):
@@ -97,9 +98,10 @@ def generateDataset(d, featuresId, index=-1):
 		x = getInputInDataset(d, i, featuresId, inFloat=True)
 		y = getIndex(houseArray, getHouseByIndex(d, i))
 
-		if index == -1 or (y == index):
-			X.append(x)
-			Y.append(y)
+		if x is not None: 
+			if index == -1 or (y == index):
+				X.append(x)
+				Y.append(y)
 
 	X = np.array(X)
 	Y = np.array(Y)
@@ -111,7 +113,6 @@ def generateDataset(d, featuresId, index=-1):
 def generatePrediction(allclassifier, X, Y):
 	y_pred = []
 	y_true = []
-	m = Math()
 
 	for i,data in enumerate(X):
 		output = allclassifier.getMax(data) + 1
@@ -126,19 +127,14 @@ def generatePrediction(allclassifier, X, Y):
 	return np.array(y_true), np.array(y_pred)
 
 def rescaleCore(x, min, max):
-	m = Math()
-	# x = np.log(x)*10000
 	ret = 1.0*(((x - (min)) / (max - min)))
 	return ret
 
 def meanNormalization(x, moy, min, max):
-	m = Math()
 	ret = 1.0*(((x - (moy)) / (max - min)))+0.5
 	return ret
 
 def standardization(x, moy, std):
-	m = Math()
-	# x = np.log(x)
 	ret = 1.0*(((x - (moy)) / (std)))+0.5
 	return ret
 
@@ -167,31 +163,39 @@ def featureExpand(d, X):
 			tmp.append(j)
 
 		# tab = [2,3,4,5,7,8,11,12]
-		# tab = [4,5,7]
+		tab = [4,5,7]
 		# tab = [1,5,6,8,10,11,12]
 
 		# l = len(tab)
 		# for k in tab:
+		for i in range(5):
+			tmp.append(1) # intercept
 
 		l = len(X[0])
 		for k in range(l):
+			tmp.append(1) # intercept
 
-			# for j in range(tab):
+			# for j in tab:
 			for j in range(l):
-				# pass
+				# tmp.append(1) # intercept
+				pass
 				# print str(k) + " * " + str(j+1)
 				# if j+1 != k:
-					tmp.append(data1[k]*data1[j%l])
+				tmp.append(data1[k]*data1[(j+1)%l])
+					# tmp.append(data1[k]*data1[j%l])
 					# tmp.append((data1[k]*data1[j%l]*data1[(j+1)%l]))
 					# tmp.append(data1[k]*data1[j+2])
 				# if j+2 != k:
 					# tmp.append(data1[k]*data1[j+2])
+		for i in range(5):
+			tmp.append(1)
+
 
 		nbInput = len(tmp)
 		newX.append(tmp) 
 		# exit(0)
-
 	return np.array(newX)
+
 
 ##############################
 ############ MAIN ############
@@ -208,18 +212,21 @@ def main():
 	d.loadFile(file)
 
 	featuresId = range(7, 19)
+	# featuresId = [7,8,9,10,11,12,13,14,17,18]
+	# featuresId = [10,11,13,14,17,18]
 	# featuresId = [12,14,16,17,18]
 	# nbInput = len(featuresId)
 	X, Y = generateDataset(d, featuresId)
 
-	# print X
+	# print X 
+	# exit(0)
 	# print "------------"
 	# print Y
 	# print "------------"
 
 	X = featureExpand(d, X)
 	X = featureRescale(d, X)
-
+	# print X
 	#################################################
 	# import matplotlib.pyplot as plt
 	# from numpy.random import rand

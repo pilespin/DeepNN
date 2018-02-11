@@ -40,7 +40,7 @@ class MultiClassifier(Math):
 		# for i,d in enumerate(self.allClassifier):
 		# 	# print("TRAIN" + str(i))
 		# 	loss = d.train(X, Y, i)
-		# 	allLoss.append(loss)
+			# allLoss.append(loss)
 
 		##########################################################
 
