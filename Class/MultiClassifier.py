@@ -73,8 +73,11 @@ class MultiClassifier(Math):
 			d.setLr(lr)
 
 	def saveWeight(self):
+		AllWeight = []
 		with open('weight', 'w') as file:
 			for i,d in enumerate(self.allClassifier):
-				file.write(str(d.getWeight()) + "\n")
+				AllWeight.append(d.getWeight())
+				# file.write(str(d.getWeight()) + "\n")
+			file.write(str(np.array(AllWeight)) + "\n")
 
 	################################## GET ##################################

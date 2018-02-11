@@ -53,7 +53,8 @@ def getInputInDataset(d, index, featuresId, inFloat=False):
 	X = []
 	if inFloat == True:
 		for i in featuresId:
-			tmp = d.getDataset()[index][i]
+			# tmp = d.getDataset()[index][i]
+			tmp = d.getDataset(index, i)
 			if len(tmp) > 0:
 				X.append(float(tmp))
 			else:
@@ -61,7 +62,8 @@ def getInputInDataset(d, index, featuresId, inFloat=False):
 				# X.append(float(1))
 	else:
 		for i in featuresId:
-			X.append(d.getDataset()[index][i])
+			X.append(d.getDataset(index, i))
+			# X.append(d.getDataset()[index][i])
 
 	return np.array(X)
 
@@ -78,13 +80,17 @@ def generateDataset(d, featuresId, index=-1):
 
 		if x is not None: 
 			if index == -1 or (y == index):
-				X.append(x)
-				Y.append(y)
+				if len(x) > 0 and y >= 0:
+					X.append(x)
+					Y.append(y)
 
 	X = np.array(X)
 	Y = np.array(Y)
 	if len(X) != len(Y):
 		print("Error when generate dataset")
+		exit(1)
+	if len(X) <= 0:
+		print("Error Empty dataset")
 		exit(1)
 	return X, Y
 
@@ -147,7 +153,6 @@ def featureExpand(d, X):
 		for k in range(l):
 			# tmp.append(1) # intercept
 
-			# for j in tab:
 			for j in range(l):
 				pass
 				# if j+1 != k:
