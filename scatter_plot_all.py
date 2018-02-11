@@ -1,10 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv
 import sys
 import math
 
 from Dataset import *
+from IOHelper import *
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,19 +13,6 @@ import matplotlib.pyplot as plt
 import time
 import sys
 
-def checkArg(argv):
-	if len(sys.argv) <= 1:
-		print "Missing file"
-		exit(1)
-
-	file = sys.argv[1]
-
-	try:
-		open(file, 'r')
-	except IOError:
-		print "Can't read: " + file
-		exit(1)
-	return (file)
 
 def addFeatureOnSubplot(index, X, name, indexSubplot):
 
@@ -68,10 +56,9 @@ class Index(object):
 		l.set_ydata(ydata)
 		plt.draw()
 
-from matplotlib.widgets import Button
 def main():
 
-	file = checkArg(sys.argv)
+	file = IOHelper().checkArg(sys.argv)
 
 	d = Dataset()
 
@@ -80,8 +67,9 @@ def main():
 	fig, axes = plt.subplots(figsize=(18,10))
 	fig.tight_layout()
 
-	index = 6
-	while index <= 17:
+	# index = 6
+	# while index <= 17:
+	for index in range(6, 19):
 		
 		mean = d.mean(d.getFeature(index))
 		std = d.standardDeviation(d.getFeature(index), mean)
@@ -98,51 +86,8 @@ def main():
 		index+=1
 
 
-	# plt.title(d.getName(index))
-
-
-	# callback = Index()
-
-	# axprev = plt.axes([0.7, 0.05, 0.1, 0.075])
-	# axnext = plt.axes([0.81, 0.05, 0.1, 0.075])
-	# bnext = Button(axnext, 'Next')
-	# bnext.on_clicked(callback.next)
-	# bprev = Button(axprev, 'Previous')
-	# bprev.on_clicked(callback.prev)
-
-
-
-	# plt.legend()
-
-	# plt.SubplotParams()
 	plt.savefig('scatter_plot.png')
 	plt.show()
-
-
-
-
-	# x1 = np.linspace(0.0, 5.0)
-	# x2 = np.linspace(0.0, 2.0)
-
-	# y1 = np.cos(2 * np.pi * x1) * np.exp(-x1)
-	# y2 = np.cos(2 * np.pi * x2)
-
-	# plt.subplot(2, 2, 1)
-	# plt.plot(x1, y1, 'o-')
-	# plt.title('A tale of 2 subplots')
-	# plt.ylabel('Damped oscillation')
-
-	# plt.subplot(2, 2, 2)
-	# plt.plot(x2, y2, '.-')
-	# plt.xlabel('time (s)')
-	# plt.ylabel('Undamped')
-
-	# plt.subplot(2, 2, 3)
-	# plt.plot(x2, y2, '.-')
-	# plt.xlabel('time (s)')
-	# plt.ylabel('Undamped')
-	# plt.show()
-
 
 
 main()

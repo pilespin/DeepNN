@@ -1,38 +1,25 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv
 import sys
 import math
 
 from Dataset import *
+from IOHelper import *
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-def checkArg(argv):
-	if len(sys.argv) <= 1:
-		print "Missing file"
-		exit(1)
-
-	file = sys.argv[1]
-
-	try:
-		open(file, 'r')
-	except IOError:
-		print "Can't read: " + file
-		exit(1)
-	return (file)
-
 def main():
 
-	file = checkArg(sys.argv)
+	file = IOHelper().checkArg(sys.argv)
 
 	d = Dataset()
 
 	d.loadFile(file)
 
 
-	print d.getName(1)
+	print(d.getName(1))
 	HOUSE = {}
 	for house in d.getFeature(1, uniq=True):
 		HOUSE[house] = {}
@@ -43,7 +30,7 @@ def main():
 		HOUSE[house]['5q75'] = []
 		HOUSE[house]['6max'] = []
 		HOUSE['name'] = []
-		print house
+		print(house)
 		d.printFeatureHeader()
 		index = 6
 		while index <= 18:
@@ -66,13 +53,14 @@ def main():
 			HOUSE[house]['5q75'].append(q75)
 			HOUSE[house]['6max'].append(max1)
 			HOUSE['name'].append(nom)
-		print ""
+		print("")
 	
 	x = np.arange(len(HOUSE['Gryffindor']['1moy']))
 
 	width = 0.035
 	w=0
-	for i in sorted(HOUSE['Gryffindor'].iterkeys()):
+	for i in sorted(HOUSE['Gryffindor']):
+	# for i in sorted(HOUSE['Gryffindor'].iterkeys()):
 		if w == 0:
 			plt.bar(x + (width*(w+1)), HOUSE['Gryffindor'][i], width, color='b', label='Gryffindor')
 			plt.bar(x + (width*(w+2)), HOUSE['Hufflepuff'][i], width, color='r', label='Hufflepuff')

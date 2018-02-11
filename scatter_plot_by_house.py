@@ -1,10 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv
 import sys
 import math
 
 from Dataset import *
+from IOHelper import *
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,29 +13,14 @@ import matplotlib.pyplot as plt
 import time
 import sys
 
-def checkArg(argv):
-	if len(sys.argv) <= 1:
-		print ("Missing file")
-		exit(1)
-
-	file = sys.argv[1]
-
-	try:
-		open(file, 'r')
-	except IOError:
-		print("Can't read: " + file)
-		exit(1)
-	return (file)
-
 def main():
 
-	file = checkArg(sys.argv)
+	file = IOHelper().checkArg(sys.argv)
 
 	d = Dataset()
 
 	d.loadFile(file)
 
-	# index = 11
 
 	for index in range(6, 19):
 
@@ -70,7 +56,6 @@ def main():
 		plt.tight_layout()
 		# plt.set_xlim([-10, len(x1) + 10])
 		plt.show()
-
 
 
 main()

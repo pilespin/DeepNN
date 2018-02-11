@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from Math import *
 
@@ -25,7 +25,7 @@ class Classifier(Math):
 		self.number = number
 
 		# self.weight = np.ones(self.nbInput, dtype=float)
-		self.weight = np.random.uniform(low=0.99999, high=1, size=(self.nbInput,))
+		self.weight = np.random.uniform(low=0.999, high=1, size=(self.nbInput,))
 		self.mt = Math()
 
 	def printInfo(self):
@@ -46,21 +46,15 @@ class Classifier(Math):
 
 	def sigma(self, X, Y, classifierNb, thNb):
 		classifierNb += 1
-		# print ("INC: " + str(classifierNb))
 		m = 0
 		sigma = 0.0
 		for i in range(self.m):
 			Htheta = self.predict(X[i])
 
-			# print ("OUT: " + str(Y[i]) + "EXT: " + str(X[i][thNb]))
-			# print "-------"
-			# print ("CLASSIFIER: " + str(classifierNb) + " OUTPUT: " + str(Y[i]))
-
 			if classifierNb == Y[i]:
 				m += 1
 				# sigma += (Htheta - 1) * X[i][thNb]
 				sigma += np.log(Htheta) * X[i][thNb]
-				# sigma += tmp
 			# else:
 				# m += 1
 				# tmp = (Htheta) * X[i][thNb]

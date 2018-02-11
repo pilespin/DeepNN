@@ -1,7 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv
-# import math
 import numpy as np
 from Math import *
 
@@ -58,10 +57,8 @@ class Dataset(Math):
 		file = open(file, "r")
 		arr = csv.reader(file, delimiter=',')
 
-		i = 0
-		for line in arr:
+		for i,line in enumerate(arr):
 			if i == 0:
-				i+=1
 				self._Nm.append(line)
 				continue
 			self._X.append(line)
@@ -71,124 +68,12 @@ class Dataset(Math):
 	################################## CALC ##################################
 
 
-	def countByIndex(self, index):
-		# return len(X)
-		i = 0
-		for x in self._X[index]:
-			i+=1
-		return i
-
-	def count(self, X):
-		return len(X)
-		# i = 0
-		# for x in X:
-		# 	i+=1
-		# return i
-
-	# def mean(self, X):
-	# 	s = 0
+	# def countByIndex(self, index):
+	# 	# return len(X)
 	# 	i = 0
-	# 	for x in X:
+	# 	for x in self._X[index]:
 	# 		i+=1
-	# 		s += (x - s) / i
-	# 	return s
-
-	def standardDeviation(self, X, mean):
-		s = 0
-		i = 0
-		for x in X:
-			i+=1
-			add = (x - mean) **2
-			s += (add - s) / i
-		return np.sqrt(s)
-
-	def min(self, X):
-		m = None
-		for new in X:
-			if (m == None):
-				m = new
-			elif new < m:
-				m = new
-		return m
-
-	def max(self, X):
-		m = None
-		for new in X:
-			if (m == None):
-				m = new
-			elif new > m:
-				m = new
-		return m
-
-	def moy2D(self, X):
-		allMoy = []
-
-		for i in X:
-			allMoy.append(self.mean(i))
-
-		return self.max(allMoy)
-
-	def min2D(self, X):
-		allMin = []
-
-		for i in X:
-			allMin.append(self.min(i))
-
-		return self.min(allMin)
-
-	def max2D(self, X):
-		allMax = []
-
-		for i in X:
-			allMax.append(self.max(i))
-
-		return self.max(allMax)
-
-	def std2D(self, X):
-		allStd = []
-		allMoy = []
-
-		for i in X:
-			allMoy.append(self.mean(i))
-
-		moy = self.mean(allMoy)
-
-		for i in X:
-			allStd.append(self.standardDeviation(i, moy))
-
-		return self.min(allStd)
-
-	def medianArray(self, X):
-		m = len(X)
-		if m <= 0:
-			print("Error when getting quartile array size of " + str(m))
-			exit(1)
-		if m == 1:
-			return [X[0]], [X[0]], X[0]
-		if m % 2 == 0:
-			# print "IS PAIR"
-			first = m / 2
-			second = m / 2
-			med = (X[first]-1 + X[second]) / 2.0
-			a = X[:first]
-			b = X[second:m]
-			return a, med, b
-		else:
-			# print "IS IMPAIR"
-			first = ((m+1) / 2) - 1
-			second = ((m+1) / 2)
-			med = (X[first])
-			a = X[:first]
-			b = X[second:m]
-			return a, med, b
-
-	def quartile(self, X):
-		X.sort()
-		A, med, B = self.medianArray(X)
-		n1, one, n2 = self.medianArray(A)
-		n1, two, n2 = self.medianArray(B)
-
-		return one, float(med), two
+	# 	return i
 
 	################################## PRINT ##################################
 
@@ -196,7 +81,7 @@ class Dataset(Math):
 		print("                                         Count           Std             Mean            Min             25%             50%             75%             Max")
 
 	def printAllFeature(self):
-		for i in xrange(len(self._X[0])):
+		for i in range(len(self._X[0])):
 			self.printFeature(i)
 
 	def printFeature(self, index):

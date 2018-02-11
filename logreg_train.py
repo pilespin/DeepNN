@@ -4,6 +4,7 @@ from Dataset import *
 from Classifier import *
 from MultiClassifier import *
 from Math import *
+from IOHelper import *
 
 import numpy as np
 import csv
@@ -11,25 +12,9 @@ import sys
 
 from sklearn.metrics import accuracy_score
 
-# import matplotlib.pyplot as plt
-
 # np.set_printoptions(precision=4)
 np.set_printoptions(threshold='nan')
 np.set_printoptions(suppress=True)
-
-def checkArg(argv):
-	if len(sys.argv) <= 1:
-		print("Missing file")
-		exit(1)
-
-	file = sys.argv[1]
-
-	try:
-		open(file, 'r')
-	except IOError:
-		print("Can't read: " + file)
-		exit(1)
-	return (file)
 
 def csvToArray(file):
 	file = open(file, "r")
@@ -38,10 +23,8 @@ def csvToArray(file):
 	X = []
 	Y = []
 
-	i = 0
-	for line in arr:
-		i+=1
-		if i!=1:
+	for i,line in enumerate(arr):
+		if i != 0:
 			X.append(line[0])
 			Y.append(line[1])
 	
@@ -58,22 +41,17 @@ def getHouseByIndex(d, index):
 	return house
 
 def getIndex(X, querie):
-	i = 0
-	for x in X:
-		i+=1
+	for i,x in enumerate(X):
 		if x == querie:
-			return int(i)
+			return int(i+1)
 	return -1
 
 def getInputInDataset(d, index, featuresId, inFloat=False):
 	global nbInput
-	# global start
-	# end = start + nbInput - 1
 
 	X = []
 	if inFloat == True:
 		for i in featuresId:
-		# for i in range(start, end+1):
 			tmp = d.getDataset()[index][i]
 			if len(tmp) > 0:
 				X.append(float(tmp))
@@ -82,7 +60,6 @@ def getInputInDataset(d, index, featuresId, inFloat=False):
 				# X.append(float(1))
 	else:
 		for i in featuresId:
-		# for i in range(start, end+1):
 			X.append(d.getDataset()[index][i])
 
 	return np.array(X)
@@ -162,38 +139,24 @@ def featureExpand(d, X):
 		for j in data1:
 			tmp.append(j)
 
-		# tab = [2,3,4,5,7,8,11,12]
-		tab = [4,5,7]
-		# tab = [1,5,6,8,10,11,12]
-
-		# l = len(tab)
-		# for k in tab:
-		for i in range(5):
-			tmp.append(1) # intercept
+		# for i in range(3):
+		tmp.append(1) # intercept
 
 		l = len(X[0])
 		for k in range(l):
-			tmp.append(1) # intercept
+			# tmp.append(1) # intercept
 
 			# for j in tab:
 			for j in range(l):
-				# tmp.append(1) # intercept
 				pass
-				# print str(k) + " * " + str(j+1)
 				# if j+1 != k:
-				tmp.append(data1[k]*data1[(j+1)%l])
-					# tmp.append(data1[k]*data1[j%l])
-					# tmp.append((data1[k]*data1[j%l]*data1[(j+1)%l]))
-					# tmp.append(data1[k]*data1[j+2])
-				# if j+2 != k:
-					# tmp.append(data1[k]*data1[j+2])
+					# tmp.append(data1[k]*data1[(j+1)%l])
+
 		for i in range(5):
 			tmp.append(1)
 
-
 		nbInput = len(tmp)
 		newX.append(tmp) 
-		# exit(0)
 	return np.array(newX)
 
 
@@ -203,42 +166,22 @@ def featureExpand(d, X):
 
 nbInput = 0
 nbOutput = 4
+epoch = 30
 
 def main():
 
-	file = checkArg(sys.argv)
+	file = IOHelper().checkArg(sys.argv)
 
 	d = Dataset()
 	d.loadFile(file)
 
 	featuresId = range(7, 19)
-	# featuresId = [7,8,9,10,11,12,13,14,17,18]
-	# featuresId = [10,11,13,14,17,18]
-	# featuresId = [12,14,16,17,18]
 	# nbInput = len(featuresId)
 	X, Y = generateDataset(d, featuresId)
 
-	# print X 
-	# exit(0)
-	# print "------------"
-	# print Y
-	# print "------------"
-
 	X = featureExpand(d, X)
 	X = featureRescale(d, X)
-	# print X
-	#################################################
-	# import matplotlib.pyplot as plt
-	# from numpy.random import rand
 
-	# fig, ax = plt.subplots()
-	# for i,dt in enumerate(X):
-	# 	plt.scatter(np.arange(len(X[i])), X[i], alpha=0.3, edgecolors='none')
-	# # plt.scatter(np.arange(len(X[3])), X[3], alpha=0.3, edgecolors='none')
-
-	# plt.show()
-
-	#################################################
 	allclassifier = MultiClassifier(nbInput, nbOutput)
 
 	for i in range(nbOutput):
@@ -248,9 +191,9 @@ def main():
 	oldLoss = 9e+9
 	allclassifier.setLr(lr)
 
-	allclassifier.printInfo()
+	# allclassifier.printInfo()
 
-	for j in range(20000):
+	for j in range(epoch):
 		loss = allclassifier.train(X, Y)
 
 		allLoss = loss.sum()
