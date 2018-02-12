@@ -56,9 +56,9 @@ class Dataset(Math):
 					X.append(float(x[index]))
 		else:
 			if self._isFloat(self.getDataset(0, index)) == True:
-				for x in self._X:
-					if len(x[index]) > 0:
-						X.append(float(x[index]))
+				for i,d in enumerate(self._X):
+					if len(self.getDataset(i,index)) > 0:
+						X.append(float(self.getDataset(i,index)))
 			else:
 				for i,d in enumerate(self._X):
 					if len(self.getDataset(i,index)) > 0:

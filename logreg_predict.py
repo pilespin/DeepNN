@@ -83,7 +83,7 @@ def main():
 
 	file = IOHelper().checkArg(sys.argv)
 	if (len(file) < 2):
-		print "Missing file"
+		print("Missing file")
 		exit(1)
 
 	d = Dataset()
