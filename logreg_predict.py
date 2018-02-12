@@ -82,9 +82,12 @@ def main():
 	nbOutput = 4
 
 	file = IOHelper().checkArg(sys.argv)
+	if (len(file) < 2):
+		print "Missing file"
+		exit(1)
 
 	d = Dataset()
-	d.loadFile(file)
+	d.loadFile(file[0])
 
 	featuresId = range(7, 19)
 	# nbInput = len(featuresId)
@@ -93,7 +96,7 @@ def main():
 	X, nbInput = d.featureExpand(d, X)
 	X = d.featureRescale(d, X)
 
-	allWeight, AllOutput = csvToArray("weight.csv")
+	allWeight, AllOutput = csvToArray(file[1])
 
 	allclassifier = MultiClassifier(nbInput, AllOutput)
 	allclassifier.initWeight(allWeight)

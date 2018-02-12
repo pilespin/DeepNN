@@ -149,7 +149,7 @@ class Dataset(Math):
 			self.printFeature(i)
 
 	def printFeature(self, index):
-		if self._isFloat(self.self.getDataset(0,index)) == False or self.getName(index) == "Index":
+		if self._isFloat(self.getDataset(0,index)) == False or self.getName(index) == "Index":
 			return;
 	
 		nom = self.getName(index)

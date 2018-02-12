@@ -12,11 +12,12 @@ import matplotlib.pyplot as plt
 def main():
 
 	file = IOHelper().checkArg(sys.argv)
+	if (len(file) < 1):
+		print "Missing file"
+		exit(1)
 
 	d = Dataset()
-
-	d.loadFile(file)
-
+	d.loadFile(file[0])
 
 	for index in range(6, 19):
 

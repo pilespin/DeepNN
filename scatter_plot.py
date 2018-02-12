@@ -37,10 +37,12 @@ def addFeatureOnSubplot(index, X, name, indexSubplot):
 def main():
 
 	file = IOHelper().checkArg(sys.argv)
+	if (len(file) < 1):
+		print "Missing file"
+		exit(1)
 
 	d = Dataset()
-
-	d.loadFile(file)
+	d.loadFile(file[0])
 
 	fig, axes = plt.subplots(figsize=(18,10))
 	fig.tight_layout()

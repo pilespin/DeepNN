@@ -98,9 +98,12 @@ def main():
 	epoch = 30
 
 	file = IOHelper().checkArg(sys.argv)
+	if (len(file) < 1):
+		print "Missing file"
+		exit(1)
 
 	d = Dataset()
-	d.loadFile(file)
+	d.loadFile(file[0])
 
 	featuresId = range(7, 19)
 	# nbInput = len(featuresId)
