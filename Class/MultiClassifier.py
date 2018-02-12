@@ -15,12 +15,21 @@ class MultiClassifier(Math):
 	m = None
 
 	def __init__(self, nbInput, allOutput):
-		# print allOutput
 		self.nbOutput = len(allOutput)
 		self.nbInput = nbInput
 		self.m = Math()
 		for i,d in enumerate(allOutput):
 			self.addClassifier(i, d)
+
+	def initWeight(self, allWeight):
+		if len(allWeight) != self.nbClassifier:
+			print("Error different size when try to init weight")
+			exit(1)
+
+		for i,d in enumerate(self.allClassifier):
+			# if allWeight[i] == len(d.getWeight)
+			d.initWeight(allWeight[i])
+
 
 	def printInfo(self):
 		for i in self.allClassifier:
@@ -72,23 +81,29 @@ class MultiClassifier(Math):
 		# print("PREDICT ALL: " + str(pr))
 		return self.m.argMax(pr)
 
+	def predict(self, X):
+		pr = self.predictAll(X)
+		# print("PREDICT ALL: " + str(pr))
+		ret = self.m.argMax(pr)
+		name = self.allClassifier[ret].getOutputName()
+		return name
+
 	def setLr(self, lr):
 		for i,d in enumerate(self.allClassifier):
 			d.setLr(lr)
 
 	def saveWeight(self):
 		All = []
-		with open('weight', 'w+') as file:
-			for i,d in enumerate(self.allClassifier):
-				name = d.getOutputName()
-				weight = d.getWeight()
-				
-				tmp = []
-				tmp.append(name)
-				for i in weight:
-					tmp.append(i)
-				All.append(tmp)
+		for i,d in enumerate(self.allClassifier):
+			name = d.getOutputName()
+			weight = d.getWeight()
 
-		with open('weight.csv', 'w+') as file:
+			tmp = []
+			tmp.append(name)
+			for i in weight:
+				tmp.append(i)
+			All.append(tmp)
+
+		with open('weight.csv', 'w') as file:
 			csvWriter = csv.writer(file, delimiter=',')
 			csvWriter.writerows(All)

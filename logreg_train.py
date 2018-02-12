@@ -17,24 +17,6 @@ from sklearn.metrics import accuracy_score
 np.set_printoptions(threshold='nan')
 np.set_printoptions(suppress=True)
 
-# def csvToArray(file):
-# 	file = open(file, "r")
-# 	arr = csv.reader(file, delimiter=',')
-
-# 	X = []
-# 	Y = []
-
-# 	for i,line in enumerate(arr):
-# 		if i != 0:
-# 			X.append(line[0])
-# 			Y.append(line[1])
-	
-# 	if len(X) != len(Y):
-# 		print("Error")
-# 		exit(1)
-	
-# 	return (X, Y)
-
 #############################################################
 
 def getHouseByIndex(d, index):
@@ -48,22 +30,17 @@ def getIndex(X, querie):
 	return -1
 
 def getInputInDataset(d, index, featuresId, inFloat=False):
-	global nbInput
-
 	X = []
 	if inFloat == True:
 		for i in featuresId:
-			# tmp = d.getDataset()[index][i]
 			tmp = d.getDataset(index, i)
 			if len(tmp) > 0:
 				X.append(float(tmp))
 			else:
 				return None
-				# X.append(float(1))
 	else:
 		for i in featuresId:
 			X.append(d.getDataset(index, i))
-			# X.append(d.getDataset()[index][i])
 
 	return np.array(X)
 
@@ -110,71 +87,15 @@ def generatePrediction(allclassifier, X, Y):
 
 	return np.array(y_true), np.array(y_pred)
 
-def rescaleCore(x, min, max):
-	ret = 1.0*(((x - (min)) / (max - min)))
-	return ret
-
-def meanNormalization(x, moy, min, max):
-	ret = 1.0*(((x - (moy)) / (max - min)))+0.5
-	return ret
-
-def standardization(x, moy, std):
-	ret = 1.0*(((x - (moy)) / (std)))+0.5
-	return ret
-
-def featureRescale(d, X):
-	min = d.min2D(X)
-	max = d.max2D(X)
-	# moy = d.moy2D(X)
-	# std = d.std2D(X)
-	newX = []
-
-	for i,data1 in enumerate(X):
-		for j,data2 in enumerate(data1):
-			X[i][j] = rescaleCore(data2, min, max)
-			# X[i][j] = meanNormalization(data2, moy, min, max)
-			# tmp = standardization(data2, moy, std)
-			# X[i][j] = rescaleCore(tmp, -30, 30)
-	return X
-
-def featureExpand(d, X):
-	global nbInput
-	newX = []
-
-	for i,data1 in enumerate(X):
-		tmp = []
-		for j in data1:
-			tmp.append(j)
-
-		# for i in range(3):
-		tmp.append(1) # intercept
-
-		l = len(X[0])
-		for k in range(l):
-			# tmp.append(1) # intercept
-
-			for j in range(l):
-				pass
-				# if j+1 != k:
-					# tmp.append(data1[k]*data1[(j+1)%l])
-
-		for i in range(5):
-			tmp.append(1)
-
-		nbInput = len(tmp)
-		newX.append(tmp) 
-	return np.array(newX)
-
-
 ##############################
 ############ MAIN ############
 ##############################
 
-nbInput = 0
-nbOutput = 0
-epoch = 30
-
 def main():
+
+	nbInput = 0
+	nbOutput = 0
+	epoch = 30
 
 	file = IOHelper().checkArg(sys.argv)
 
@@ -185,16 +106,13 @@ def main():
 	# nbInput = len(featuresId)
 	X, Y = generateDataset(d, featuresId)
 
-	X = featureExpand(d, X)
-	X = featureRescale(d, X)
+	X, nbInput = d.featureExpand(d, X)
+	X = d.featureRescale(d, X)
 
 	houseArray = d.getFeature(1, uniq=True)
 	nbOutput = len(houseArray)
 
 	allclassifier = MultiClassifier(nbInput, houseArray)
-
-	# for i in range(nbOutput):
-	# 	allclassifier.addClassifier(i, houseArray[i])
 
 	lr = 1000.0
 	oldLoss = 9e+9

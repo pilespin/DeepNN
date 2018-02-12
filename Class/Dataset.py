@@ -84,13 +84,60 @@ class Dataset(Math):
 
 	################################## CALC ##################################
 
+	def rescaleCore(self, x, min, max):
+		ret = 1.0*(((x - (min)) / (max - min)))
+		return ret
 
-	# def countByIndex(self, index):
-	# 	# return len(X)
-	# 	i = 0
-	# 	for x in self._X[index]:
-	# 		i+=1
-	# 	return i
+	def meanNormalization(self, x, moy, min, max):
+		ret = 1.0*(((x - (moy)) / (max - min)))+0.5
+		return ret
+
+	def standardization(self, x, moy, std):
+		ret = 1.0*(((x - (moy)) / (std)))+0.5
+		return ret
+
+	def featureRescale(self, d, X):
+		min = self.min2D(X)
+		max = self.max2D(X)
+		# moy = self.moy2D(X)
+		# std = self.std2D(X)
+		newX = []
+
+		for i,data1 in enumerate(X):
+			for j,data2 in enumerate(data1):
+				X[i][j] = self.rescaleCore(data2, min, max)
+				# X[i][j] = meanNormalization(data2, moy, min, max)
+				# tmp = standardization(data2, moy, std)
+				# X[i][j] = rescaleCore(tmp, -30, 30)
+		return X
+
+	def featureExpand(self, d, X):
+		global nbInput
+		newX = []
+
+		for i,data1 in enumerate(X):
+			tmp = []
+			for j in data1:
+				tmp.append(j)
+
+			# for i in range(3):
+			tmp.append(1) # intercept
+
+			l = len(X[0])
+			for k in range(l):
+				# tmp.append(1) # intercept
+
+				for j in range(l):
+					pass
+					# if j+1 != k:
+						# tmp.append(data1[k]*data1[(j+1)%l])
+
+			for i in range(5):
+				tmp.append(1)
+
+			nbInput = len(tmp)
+			newX.append(tmp) 
+		return np.array(newX), nbInput
 
 	################################## PRINT ##################################
 

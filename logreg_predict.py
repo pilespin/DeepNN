@@ -22,8 +22,12 @@ def csvToArray(file):
 	Y = []
 
 	for i,line in enumerate(arr):
-		X.append(line[1:])
-		Y.append(line[:1])
+		tmp = []
+		for i in line[1:]:
+			tmp.append(float(i))
+
+		X.append(tmp)
+		Y.append(line[:1][0])
 	
 	if len(X) != len(Y):
 		print("Error")
@@ -33,33 +37,18 @@ def csvToArray(file):
 
 #############################################################
 
-# def getHouseByIndex(d, index):
-# 	house = d.getDataset()[index][1]
-# 	return house
-
-# def getIndex(X, querie):
-# 	for i,x in enumerate(X):
-# 		if x == querie:
-# 			return int(i+1)
-# 	return -1
-
 def getInputInDataset(d, index, featuresId, inFloat=False):
-	global nbInput
-
 	X = []
 	if inFloat == True:
 		for i in featuresId:
-			# tmp = d.getDataset()[index][i]
 			tmp = d.getDataset(index, i)
 			if len(tmp) > 0:
 				X.append(float(tmp))
 			else:
 				return None
-				# X.append(float(1))
 	else:
 		for i in featuresId:
 			X.append(d.getDataset(index, i))
-			# X.append(d.getDataset()[index][i])
 
 	return np.array(X)
 
@@ -83,6 +72,7 @@ def generateDataset(d, featuresId, index=-1):
 		exit(1)
 	return X
 
+
 ##############################
 ############ MAIN ############
 ##############################
@@ -97,21 +87,22 @@ def main():
 	d.loadFile(file)
 
 	featuresId = range(7, 19)
-	nbInput = len(featuresId)
+	# nbInput = len(featuresId)
 	X = generateDataset(d, featuresId)
 
-	# print(X)
+	X, nbInput = d.featureExpand(d, X)
+	X = d.featureRescale(d, X)
 
-	allWweight, AllOutput = csvToArray("weight.csv")
-	print X
-	print Y
+	allWeight, AllOutput = csvToArray("weight.csv")
 
-	# allclassifier = MultiClassifier(nbInput, nbOutput)
+	allclassifier = MultiClassifier(nbInput, AllOutput)
+	allclassifier.initWeight(allWeight)
 
-	# for i in range(nbOutput):
-		# allclassifier.addClassifier(i)
-
-	# loss = allclassifier.train(X, Y)
+	with open('houses.csv', 'w') as file:
+		file.write("Index,Hogwarts House\n")
+		for i,d in enumerate(X):
+			name = allclassifier.predict(d)
+			file.write(str(i) + "," + name + "\n")
 
 
 main()

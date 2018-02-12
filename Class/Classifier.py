@@ -30,6 +30,13 @@ class Classifier(Math):
 		self.weight = np.random.uniform(low=0.999, high=1, size=(self.nbInput,))
 		self.mt = Math()
 
+	def initWeight(self, weight):
+		if len(self.weight) != len(weight):
+			print("Error different size when try to init weight of size " + str(len(weight)) + " instead of " + str(len(self.weight)))
+			exit(1)
+
+		self.weight = weight
+
 	def printInfo(self):
 		print("classifier " + str(self.number) + ":")
 		print("lr: " + str(self.lr))

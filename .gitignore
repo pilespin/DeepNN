@@ -124,5 +124,6 @@ weight
 scatter_plot.png
 stat.txt
 weight.csv
+houses.csv
 
 # End of https://www.gitignore.io/api/python,virtualenv
