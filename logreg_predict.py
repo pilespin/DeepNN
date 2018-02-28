@@ -45,7 +45,7 @@ def getInputInDataset(d, index, featuresId, inFloat=False):
 			if len(tmp) > 0:
 				X.append(float(tmp))
 			else:
-				return None
+				X.append(float(1))
 	else:
 		for i in featuresId:
 			X.append(d.getDataset(index, i))

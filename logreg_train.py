@@ -37,6 +37,8 @@ def getInputInDataset(d, index, featuresId, inFloat=False):
 			if len(tmp) > 0:
 				X.append(float(tmp))
 			else:
+				# X.append(float(0))
+				# X.append(float(d.mean(d.getFeature(i))))
 				return None
 	else:
 		for i in featuresId:
@@ -94,30 +96,39 @@ def generatePrediction(allclassifier, X, Y):
 def main():
 
 	nbInput = 0
-	nbOutput = 0
 	epoch = 30
 
 	file = IOHelper().checkArg(sys.argv)
-	if (len(file) < 1):
+	if (len(file) < 2):
 		print("Missing file")
 		exit(1)
 
+	featuresId = range(7, 19)
+
+	### train
 	d = Dataset()
 	d.loadFile(file[0])
 
-	featuresId = range(7, 19)
 	# nbInput = len(featuresId)
 	X, Y = generateDataset(d, featuresId)
 
 	X, nbInput = d.featureExpand(d, X)
 	X = d.featureRescale(d, X)
 
+	### test
+	d_test = Dataset()
+	d_test.loadFile(file[1])
+
+	X_test, Y_test = generateDataset(d_test, featuresId)
+
+	X_test, nbInput = d_test.featureExpand(d_test, X_test)
+	X_test = d_test.featureRescale(d_test, X_test)
+
 	houseArray = d.getFeature(1, uniq=True)
-	nbOutput = len(houseArray)
 
 	allclassifier = MultiClassifier(nbInput, houseArray)
 
-	lr = 1000.0
+	lr = 10.0
 	oldLoss = 9e+9
 	allclassifier.setLr(lr)
 
@@ -136,7 +147,8 @@ def main():
 
 		allclassifier.saveWeight()
 		
-		y_true, y_pred = generatePrediction(allclassifier, X, Y)
+		# y_true, y_pred = generatePrediction(allclassifier, X, Y)
+		y_true, y_pred = generatePrediction(allclassifier, X_test, Y_test)
 
 		# print(y_true)
 		# print(y_pred)

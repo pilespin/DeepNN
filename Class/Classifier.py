@@ -18,6 +18,7 @@ class Classifier(Math):
 	nbInput		= 0
 	number		= 0
 	weight		= []
+	bias 		= 0.00
 	loss 		= 0
 	nameOutput	= ""
 
@@ -26,8 +27,8 @@ class Classifier(Math):
 		self.number = number
 		self.nameOutput = nameOutput
 
-		# self.weight = np.ones(self.nbInput, dtype=float)
-		self.weight = np.random.uniform(low=0.999, high=1, size=(self.nbInput,))
+		self.weight = np.ones(self.nbInput, dtype=float)
+		# self.weight = np.random.uniform(low=0.9, high=1, size=(self.nbInput,))
 		self.mt = Math()
 
 	def initWeight(self, weight):
@@ -62,11 +63,11 @@ class Classifier(Math):
 
 			if classifierNb == Y[i]:
 				m += 1
-				# sigma += (Htheta - 1) * X[i][thNb]
-				sigma += np.log(Htheta) * X[i][thNb]
+				sigma += (Htheta - 1) * X[i][thNb]
+				# sigma += np.log(Htheta) * X[i][thNb]
 			# else:
 				# m += 1
-				# tmp = (Htheta) * X[i][thNb]
+				# sigma += (Htheta) * X[i][thNb]
 				# tmp = np.log(1-Htheta) * X[i][thNb]
 				# print "NOT EQUAL: " + str(tmp)
 
@@ -90,7 +91,8 @@ class Classifier(Math):
 		# sys.stdout.flush()
 
 	def predict(self, X):
-		tmp = X * self.weight
+		tmp = (X * self.weight) + random.uniform(-self.bias, self.bias)
+		# print(self.mt.sigmoid_core(tmp.sum()))
 		return self.mt.sigmoid_core(tmp.sum())
 
 	################################## GET ##################################

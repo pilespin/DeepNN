@@ -18,9 +18,11 @@ class Dataset(Math):
 	def getDataset(self, x=-1, y=-1):
 		if self._len_X != None:
 
-			if self._len_X -1 < x:
-				print("Error when trying to get element in dataset at line " + str(x+2))
-				exit(1)
+			# print ("one: " + str(self._len_X - 1) + " > " + "txx: " + str(x) )
+
+			# if self._len_X -1 < x: WTF
+			# 	print("Error when trying to get element in dataset at line " + str(x+2))
+			# 	exit(1)
 			if len(self._X[x]) -1 < y:
 				print("Error when trying to get element in dataset at line " + str(x+2) + ", index " + str(y))
 				exit(1)
@@ -120,20 +122,18 @@ class Dataset(Math):
 			for j in data1:
 				tmp.append(j)
 
-			# for i in range(3):
-			tmp.append(1) # intercept
+			# for i in range(5):
+				# tmp.append(1)
 
 			l = len(X[0])
 			for k in range(l):
-				# tmp.append(1) # intercept
-
 				for j in range(l):
 					pass
 					# if j+1 != k:
 						# tmp.append(data1[k]*data1[(j+1)%l])
 
-			for i in range(5):
-				tmp.append(1)
+			# for i in range(5):
+				# tmp.append(1)
 
 			nbInput = len(tmp)
 			newX.append(tmp) 
