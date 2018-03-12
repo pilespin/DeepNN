@@ -8,13 +8,11 @@ from threading import Thread
 
 class MultiClassifier(Math):
 
-	allClassifier = []
-	nbInput = 0
-	nbOutput = 0
-	nbClassifier = 0
-	m = None
-
 	def __init__(self, nbInput, allOutput):
+
+		self.allClassifier = []
+		self.nbClassifier = 0
+
 		self.nbOutput = len(allOutput)
 		self.nbInput = nbInput
 		self.m = Math()
@@ -46,30 +44,41 @@ class MultiClassifier(Math):
 			out.append(d.predict(X))
 		return np.array(out)
 
+	def weightRegularization(self, threshold):
+		for i in self.allClassifier:
+			if np.min(i.getWeight()) < threshold:
+				break
+
+			for i in self.allClassifier:
+				a = [num-1 for num in i.getWeight()]
+				i.initWeight([a])
+
 	def train(self, X, Y):
 
+		self.weightRegularization(3)
+
 		### Without thread
-		# allLoss = []
-		# for i,d in enumerate(self.allClassifier):
-		# 	# print("TRAIN" + str(i))
-		# 	loss = d.train(X, Y, i)
-			# allLoss.append(loss)
+		allLoss = []
+		for i,d in enumerate(self.allClassifier):
+			# print("TRAIN" + str(i))
+			loss = d.train(X, Y, i)
+			allLoss.append(loss)
 
 		##########################################################
 
-		thread_list = []
-		allLoss = []
-		for i,d in enumerate(self.allClassifier):
+		# thread_list = []
+		# allLoss = []
+		# for i,d in enumerate(self.allClassifier):
 
-			t = Thread(target=d.train, args=(X, Y, i))
-			t.start()
-			thread_list.append(t)
+		# 	t = Thread(target=d.train, args=(X, Y, i))
+		# 	t.start()
+		# 	thread_list.append(t)
 
-		for thread in thread_list:
-			thread.join()
+		# for thread in thread_list:
+		# 	thread.join()
 
-		for i,d in enumerate(self.allClassifier):
-			allLoss.append(d.getLoss())
+		# for i,d in enumerate(self.allClassifier):
+		# 	allLoss.append(d.getLoss())
 
 		return np.array(allLoss)
 

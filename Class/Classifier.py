@@ -12,22 +12,30 @@ import random
 
 class Classifier(Math):
 
-	mt			= None
-	m 			= 0
-	lr 			= 0
-	nbInput		= 0
-	number		= 0
-	weight		= []
-	bias 		= 0.00
-	loss 		= 0
-	nameOutput	= ""
-
 	def __init__(self, nbInput, number, nameOutput):
-		self.nbInput = nbInput
-		self.number = number
-		self.nameOutput = nameOutput
+		self.mt			= None
+		self.m 			= 0
+		self.lr 		= 0
+		self.nbInput	= 0
+		self.number		= 0
+		self.weight		= []
+		self.nbLayer	= 1
+		self.bias 		= 0.00
+		self.loss 		= 0
+		self.nameOutput	= ""
 
-		self.weight = np.ones(self.nbInput, dtype=float)
+		self.nbInput 	= nbInput
+		self.number 	= number
+		self.nameOutput = nameOutput
+		self.weight		= []
+
+		# self.weight = np.ones(self.nbInput, dtype=float)
+		# self.weight.append(np.ones(self.nbInput, dtype=float))
+		for i in range(self.nbLayer):
+			self.weight.append(np.ones(self.nbInput, dtype=float))
+
+		self.weight = np.array(self.weight)
+		# exit(0)
 		# self.weight = np.random.uniform(low=0.9, high=1, size=(self.nbInput,))
 		self.mt = Math()
 
@@ -47,12 +55,18 @@ class Classifier(Math):
 
 	def updateLr(self, i, loss):
 		# print "LOSS: " + str(loss)
-		self.weight[i] -= self.lr * loss
+		self.weight[0][i] -= self.lr * loss
+
+		# if np.min(self.weight[0]) > 1:
+		# 	self.weight[0] = [num-1 for num in self.weight[0]]
+
+		# self.weight[0][i] -= self.lr * loss
+		# self.weight[1][i] -= self.lr * loss
 
 		# if loss > 0:
-		# 	self.weight[i] -= self.lr
+		# 	self.weight[0][i] -= self.lr
 		# else:
-		# 	self.weight[i] += self.lr
+		# 	self.weight[0][i] += self.lr
 
 	def sigma(self, X, Y, classifierNb, thNb):
 		classifierNb += 1
@@ -76,7 +90,7 @@ class Classifier(Math):
 	def train(self, X, Y, classifierNb):
 		self.m = len(X)
 		allLoss = []
-		for i,data in enumerate(self.weight):
+		for i,data in enumerate(self.weight[0]):
 			sigma = self.sigma(X, Y, classifierNb, i)
 			loss = sigma
 			allLoss.append(loss)
@@ -86,14 +100,45 @@ class Classifier(Math):
 
 		self.loss = np.array(allLoss).sum()
 		return (self.loss)
-		
+
 		# sys.stdout.write('.')
 		# sys.stdout.flush()
 
 	def predict(self, X):
-		tmp = (X * self.weight) + random.uniform(-self.bias, self.bias)
+
+		b = random.uniform(-self.bias, self.bias)
+		
+		X = (X * self.weight[0]) + b
+		# X = self.mt.sigmoid(X)
+		# X = (X * self.weight[1]) + b
+		# X = self.mt.sigmoid(X)
+		return self.mt.sigmoid_core(X.sum())
+
+		# new_X = X
+		# for i in range(self.nbLayer):
+			# print("-------------------------" + str(i))
+			# print(str(X))
+			# print(self.weight[i])
+			# X = (X * self.weight[i]) + random.uniform(-self.bias, self.bias)
+			# if i is not self.nbLayer-1:
+			# X = self.mt.sigmoid(X)
+
+			# print("-------------")
+			# print(X)
+			# print(self.mt.sigmoid(X))
+			# print("-------------")
+			# exit(0)
+			# X = np.array([self.mt.sigmoid_core(X.sum())]*len(X))
+			# print("-------------------------")
+			# X = X * self.weight[i]
+			# print("-------------------------")
+			# print(str(X))
+			# print(str(self.weight[i]))
+			# exit(0)
 		# print(self.mt.sigmoid_core(tmp.sum()))
-		return self.mt.sigmoid_core(tmp.sum())
+		# exit(0)
+		# return X.sum()
+		# return self.mt.sigmoid_core(X.sum())
 
 	################################## GET ##################################
 
@@ -104,7 +149,7 @@ class Classifier(Math):
 		return abs(self.loss)
 
 	def getWeight(self):
-		return self.weight
+		return self.weight[0]
 
 	def setLr(self, lr):
 		self.lr = lr

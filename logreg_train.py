@@ -96,7 +96,7 @@ def generatePrediction(allclassifier, X, Y):
 def main():
 
 	nbInput = 0
-	epoch = 30
+	epoch = 99999
 
 	file = IOHelper().checkArg(sys.argv)
 	if (len(file) < 2):
@@ -159,3 +159,4 @@ def main():
 
 
 main()
+
